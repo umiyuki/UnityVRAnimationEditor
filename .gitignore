@@ -50,9 +50,11 @@ build/ReferenceViewer/data.dat
 .vs/
 UnityPackageManager/
 Assets/Plugins/RootMotion/
-Assets/Plugins/
 Assets/TextMesh Pro/
 Assets/TextMesh Pro.meta
 Assets/Plugins.meta
 uWindowCapture.log
 uTouchInjection.log
+Assets/_TerrainAutoUpgrade/
+Assets/_TerrainAutoUpgrade.meta
+Assets/Plugins/RootMotion.meta
