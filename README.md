@@ -1,6 +1,14 @@
 # UnityVRAnimationEditor
 In Unity3d editor playmode, You can edit animation clip in VR.
 
+![IK Sample](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/images/iksample.jpg)
+
+![UI](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/images/ui.jpg)
+
+![Node Sample](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/images/nodesample.jpg)
+
+![Touchpad](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/images/touchpad.jpg)
+
 ## UnityVRAnimationEditorとは？
 Unityエディタのプレイモードで、VR内でオブジェクトを掴んで動かせます。
 
