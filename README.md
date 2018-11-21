@@ -43,3 +43,16 @@ PCにSteamVRもインストールしてください。
 
 ## Credit
 
+[VRTK](https://vrtoolkit.readme.io/) thestonefox
+
+[SteamVR Plugin](https://assetstore.unity.com/packages/tools/integration/steamvr-plugin-32647) VALVE CORPORATION
+
+[Oculus Integration](https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022) OCULUS
+
+[uTouchInjection](https://github.com/hecomi/uTouchInjection) hecomi
+
+[uWindowCapture](https://github.com/hecomi/uWindowCapture) hecomi
+
+[ユニティちゃん](http://unity-chan.com/)  © UTJ/UCL
+
+[inputsimulator](https://archive.codeplex.com/?p=inputsimulator) michaelnoonan
