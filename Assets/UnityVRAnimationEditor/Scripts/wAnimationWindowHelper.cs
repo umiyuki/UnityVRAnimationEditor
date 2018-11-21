@@ -34,6 +34,32 @@ public class wAnimationWindowHelper
         _windowStateType = _animWindowState.FieldType;
     }
 
+    public static AnimationClip GetAnimationWindowCurrentClip()
+    {
+
+        if (_window != null)
+        {
+            System.Object clip = _windowStateType.InvokeMember("get_activeAnimationClip", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+
+            return (AnimationClip)clip;
+        }
+
+        return null;
+
+    }
+
+    public static GameObject GetAnimationWindowCurrentRootGameObject()
+    {
+        if(_window!=null)
+        {
+            System.Object obj = _windowStateType.InvokeMember("get_activeRootGameObject", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+
+            return (GameObject)obj;
+        }
+
+        return null;
+    }
+
     static System.Type GetAnimationWindowType()
     {
         if (animationWindowType == null)
