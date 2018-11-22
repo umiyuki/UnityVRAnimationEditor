@@ -43,11 +43,11 @@ When there is a FinalIK asset of the asset store, it is convenient for character
 
 Refer to manual for details
 
-[マニュアル](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/Manual)
+[Manual](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/Manual)
 
-[自前のオブジェクトやキャラを操作する](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/Control your own objects and characters)
+[Control your own objects and characters](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/Control-your-own-objects-and-characters)
 
-[アニメーションクリップの作成について](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/About creating animation clips)
+[About creating animationclips](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/About-creating-animationclips)
 
 [FAQ](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/FAQ)
 
