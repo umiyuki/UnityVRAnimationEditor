@@ -1,5 +1,5 @@
 # UnityVRAnimationEditor
-In Unity3d editor playmode, You can edit animation clip in VR.
+Unity3Dエディタのプレイモードでアニメーションクリップを編集できるようにする拡張です。
 
 ![IK Sample](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/images/iksample.jpg)
 
@@ -41,13 +41,13 @@ PCにSteamVRもインストールしてください。
 
 詳細はマニュアル参照
 
-[マニュアル](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB)
+[マニュアル](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/Manual.ja)
 
-[自前のオブジェクトやキャラを操作する](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/%E8%87%AA%E5%89%8D%E3%81%AE%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%82%84%E3%82%AD%E3%83%A3%E3%83%A9%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%99%E3%82%8B)
+[自前のオブジェクトやキャラを操作する](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/Control-your-own-objects-and-characters.ja)
 
-[アニメーションクリップの作成について](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97%E3%81%AE%E4%BD%9C%E6%88%90%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)
+[アニメーションクリップの作成について](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/About-creating-animationclips.ja)
 
-[FAQ](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/FAQ)
+[FAQ](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/FAQ.ja)
 
 ## Credit
 
