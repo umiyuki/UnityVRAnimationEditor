@@ -1,6 +1,8 @@
 # UnityVRAnimationEditor
 In Unity3d editor playmode, You can edit animation clip in VR.
 
+[日本語で読む](/README.ja.md)
+
 ![IK Sample](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/images/iksample.jpg)
 
 ![UI](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/images/ui.jpg)
@@ -9,43 +11,43 @@ In Unity3d editor playmode, You can edit animation clip in VR.
 
 ![Touchpad](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/images/touchpad.jpg)
 
-## UnityVRAnimationEditorとは？
-Unityエディタのプレイモードで、VR内でオブジェクトを掴んで動かせます。
+## What is UnityVRAnimationEditor?
+In the play mode of the Unity editor, you can grab and move objects in the VR.
 
-また、VR内からエディタのアニメーションウインドウを操作できます。
+You can also operate the editor's animation window from within VR.
 
-つまり、VR内でアニメーションクリップを編集できます。
+In other words, you can edit animation clips in VR.
 
-Unityエディタの機能を無理やり使ったハッキーな実装になってるので、今のところ色々と使用上の制約があります。（プレイモードに入らないと操作できないなど）
+It is a hacky implementation that forcibly uses the function of the Unity editor, so there are various usage restrictions so far. (You can not operate without entering play mode etc.)
 
-## 用途
+## Use
 
-Unity内でキャラクターのアニメーションを作成したい時に利用するのを想定しています。
+It is supposed to use it when you want to create character animation within Unity.
 
-Timelineでアニメーション動画を作成するなど。
+Create an animated video with Timeline.
 
-ゲーム用のキャラクターアニメーションなども作成できると思います。
+I think that you can also create character animation for games.
 
-## 必要環境
-OSはWindowsのみ対応してます
+## Required environment
+OS supports Windows only
 
-Unity2018.3.0以降のバージョンが必要となります。Unity2018.3.0b10で動作確認しています。
+Unity 2018.3.0 or later version is required. Operation is confirmed with Unity 2018.3.0 b10.
 
-VRヘッドセットはViveに対応しています。通常版Viveで動作確認しています。  
-VRTKを使っているのでOculus RiftやWindows MRデバイスでも動作するかもしれませんが、検証してません。  
-PCにSteamVRもインストールしてください。
+VR headset is compatible with Vive. I am checking the operation with the regular version Vive.
+Since VRTK is used, it may work with Oculus Rift or Windows MR device, but I have not verified it.
+Please also install SteamVR on your PC.
 
-アセットストアのFinalIKアセットがあるとキャラクターのアニメーション編集で便利です。ないと不便です。バージョン1.8で動作確認しています。
+When there is a FinalIK asset of the asset store, it is convenient for character animation editing. It is not inconvenient. Operation is confirmed with version 1.8.
 
-## 詳細
+## Details
 
-詳細はマニュアル参照
+Refer to manual for details
 
-[マニュアル](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB)
+[マニュアル](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/Manual)
 
-[自前のオブジェクトやキャラを操作する](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/%E8%87%AA%E5%89%8D%E3%81%AE%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%82%84%E3%82%AD%E3%83%A3%E3%83%A9%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%99%E3%82%8B)
+[自前のオブジェクトやキャラを操作する](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/Control your own objects and characters)
 
-[アニメーションクリップの作成について](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97%E3%81%AE%E4%BD%9C%E6%88%90%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)
+[アニメーションクリップの作成について](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/About creating animation clips)
 
 [FAQ](https://github.com/umiyuki/UnityVRAnimationEditor/wiki/FAQ)
 
@@ -61,6 +63,6 @@ PCにSteamVRもインストールしてください。
 
 [uWindowCapture](https://github.com/hecomi/uWindowCapture) hecomi
 
-[ユニティちゃん](http://unity-chan.com/)  © UTJ/UCL
+[Unity-chan](http://unity-chan.com/)  © UTJ/UCL
 
 [inputsimulator](https://archive.codeplex.com/?p=inputsimulator) michaelnoonan
