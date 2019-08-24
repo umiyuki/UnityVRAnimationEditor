@@ -76,10 +76,6 @@ public class BothGripScaleRotateRootObject : MonoBehaviour
             float degree = rad * Mathf.Rad2Deg;
             if (initialDegree == null)
             { initialDegree = degree; }
-            if (initialRotation == null)
-            {
-                initialRotation = rootObjectT.rotation;
-            }
 
             var diffDegree = degree - initialDegree;
 
@@ -98,7 +94,6 @@ public class BothGripScaleRotateRootObject : MonoBehaviour
         else
         {
             initialDegree = null;
-            initialRotation = null;
         }
 
         lastLeftPos = rootObjectT.InverseTransformPoint(leftControllerAlias.transform.position);

@@ -27,6 +27,8 @@ public class Node : MonoBehaviour {
 
     public static int undoID = 0;
 
+    bool grabbing = false;
+
     public enum eNodeType
     {
         ROOT,
@@ -133,11 +135,22 @@ public class Node : MonoBehaviour {
         {
             generateNodes.RecordAllGrab();
         }
+
+
+        grabbing = true;
     }
 
     private void DoObjectUngrabbed(object sender, VRTK.InteractableObjectEventArgs e)
     {
-        string undoIDStr =  "move target" + undoID.ToString();
+      
+        //UnityEditor.Undo.FlushUndoRecordObjects();
+
+        grabbing = false;
+    }
+
+    private void RecordObject()
+    {
+        string undoIDStr = "move target" + undoID.ToString();
 
         var tempPosition = followTarget.localPosition;
         var tempRotation = followTarget.localRotation;
@@ -161,7 +174,10 @@ public class Node : MonoBehaviour {
             generateNodes.RecordAllUngrab();
         }
 
-        //UnityEditor.Undo.FlushUndoRecordObjects();
+        //Grabする前のtransformを記録しておく
+        /*savedPosition = followTarget.localPosition;
+        savedQuaternion = followTarget.localRotation;
+        savedScale = followTarget.localScale;*/
     }
 
     // Update is called once per frame
@@ -185,7 +201,12 @@ public class Node : MonoBehaviour {
         }
 
         UpdateFollow();
-	}
+
+        if (grabbing)
+        {
+            RecordObject();
+        }
+    }
 
     protected virtual void UpdateFollow()
     {

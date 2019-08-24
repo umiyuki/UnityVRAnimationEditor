@@ -15,6 +15,10 @@ public class wAnimationWindowHelper
     static System.Object _animEditorObject;
     static FieldInfo _animWindowState;
     static Type _windowStateType;
+    static Type _controlInterfaceType;
+    static FieldInfo _controlInterfaceState;
+    static System.Object _animWindowObject;
+    static System.Object _controlInterfaceObject;
 
     public static void init()
     {
@@ -32,6 +36,10 @@ public class wAnimationWindowHelper
         _animEditorObject = _animEditor.GetValue(_window);
         _animWindowState = _animEditorType.GetField("m_State", _flags);
         _windowStateType = _animWindowState.FieldType;
+        _controlInterfaceState = _windowStateType.GetField("m_ControlInterface", _flags);
+        _controlInterfaceType = _controlInterfaceState.FieldType;
+        _animWindowObject = _animWindowState.GetValue(_animEditorObject);
+        _controlInterfaceObject = _controlInterfaceState.GetValue(_animWindowObject);
     }
 
     public static AnimationClip GetAnimationWindowCurrentClip()
@@ -39,7 +47,7 @@ public class wAnimationWindowHelper
 
         if (_window != null)
         {
-            System.Object clip = _windowStateType.InvokeMember("get_activeAnimationClip", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+            System.Object clip = _windowStateType.InvokeMember("get_activeAnimationClip", BindingFlags.InvokeMethod | BindingFlags.Public, null,_animWindowObject , null);
 
             return (AnimationClip)clip;
         }
@@ -52,7 +60,7 @@ public class wAnimationWindowHelper
     {
         if(_window!=null)
         {
-            System.Object obj = _windowStateType.InvokeMember("get_activeRootGameObject", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+            System.Object obj = _windowStateType.InvokeMember("get_activeRootGameObject", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowObject, null);
 
             return (GameObject)obj;
         }
@@ -85,7 +93,7 @@ public class wAnimationWindowHelper
 
         if (_window != null)
         {
-            System.Object playing = _windowStateType.InvokeMember("get_playing", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+            System.Object playing = _windowStateType.InvokeMember("get_playing", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowObject, null);
 
             ret = (bool)playing;
         }
@@ -93,11 +101,43 @@ public class wAnimationWindowHelper
         return ret;
     }
 
+    public static void GoToTime(float time)
+    {
+        if (_window != null)
+        {
+            _controlInterfaceType.InvokeMember("ScrubTime", BindingFlags.InvokeMethod | BindingFlags.Public, null, _controlInterfaceObject, new object[1] { time });
+        }
+    }
+
+    public static void NextFrame()
+    {
+        if (_window != null)
+        {
+            _controlInterfaceType.InvokeMember("GoToNextFrame", BindingFlags.InvokeMethod | BindingFlags.Public, null, _controlInterfaceObject, null);
+        }
+    }
+
+    public static void PreviousFrame()
+    {
+        if (_window != null)
+        {
+            _controlInterfaceType.InvokeMember("GoToPreviousFrame", BindingFlags.InvokeMethod | BindingFlags.Public, null, _controlInterfaceObject, null);
+        }
+    }
+
+    public static void ResampleAnimation()
+    {
+        if (_window != null)
+        {
+            _windowStateType.InvokeMember("ResampleAnimation", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowObject, null);
+        }
+    }
+
     public static void Repaint()
     {
         if (_window != null)
         {
-            _windowStateType.InvokeMember("Repaint", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+            _windowStateType.InvokeMember("Repaint", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowObject, null);
         }
     }
 
@@ -105,7 +145,7 @@ public class wAnimationWindowHelper
     {
         if (_window != null)
         {
-            _windowStateType.InvokeMember("StartPlayback", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+            _windowStateType.InvokeMember("StartPlayback", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowObject, null);
         }
     }
 
@@ -113,7 +153,7 @@ public class wAnimationWindowHelper
     {
         if (_window != null)
         {
-            _windowStateType.InvokeMember("StopPlayback", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+            _windowStateType.InvokeMember("StopPlayback", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowObject, null);
         }
     }
 
@@ -121,7 +161,7 @@ public class wAnimationWindowHelper
     {
         if (_window != null)
         {
-            _windowStateType.InvokeMember("set_currentFrame", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), new object[1] { frame });
+            _windowStateType.InvokeMember("set_currentFrame", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowObject, new object[1] { frame });
         }
     }
 
@@ -131,7 +171,7 @@ public class wAnimationWindowHelper
 
         if (_window != null)
         {
-            System.Object frame = _windowStateType.InvokeMember("get_currentFrame", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+            System.Object frame = _windowStateType.InvokeMember("get_currentFrame", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowObject, null);
 
             ret = (int)frame;
         }
@@ -143,7 +183,7 @@ public class wAnimationWindowHelper
     {
         if (_window != null)
         {
-            _windowStateType.InvokeMember("StartRecording", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+            _windowStateType.InvokeMember("StartRecording", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowObject, null);
         }
     }
 
@@ -151,7 +191,7 @@ public class wAnimationWindowHelper
     {
         if (_window != null)
         {
-            _windowStateType.InvokeMember("StopRecording", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+            _windowStateType.InvokeMember("StopRecording", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowObject, null);
         }
     }
 
@@ -162,7 +202,7 @@ public class wAnimationWindowHelper
 
         if (_window != null)
         {
-            System.Object isPlaying = _windowStateType.InvokeMember("get_playing", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+            System.Object isPlaying = _windowStateType.InvokeMember("get_playing", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowObject, null);
 
             ret = (bool)isPlaying;
         }
@@ -176,7 +216,7 @@ public class wAnimationWindowHelper
 
         if (_window != null)
         {
-            System.Object isRecording = _windowStateType.InvokeMember("get_recording", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+            System.Object isRecording = _windowStateType.InvokeMember("get_recording", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowObject, null);
 
             ret = (bool)isRecording;
         }
@@ -188,7 +228,7 @@ public class wAnimationWindowHelper
     {
         if (_window != null)
         {
-            System.Object dopeLines = _windowStateType.InvokeMember("get_dopelines", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowState.GetValue(_animEditorObject), null);
+            System.Object dopeLines = _windowStateType.InvokeMember("get_dopelines", BindingFlags.InvokeMethod | BindingFlags.Public, null, _animWindowObject, null);
 
             
         }
