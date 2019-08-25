@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace uWindowCapture
 {
@@ -28,9 +31,40 @@ public class UwcManager : MonoBehaviour
         return instance_;
     }
 
-    public DebugMode debugMode = DebugMode.File;
-    public static event Lib.DebugLogDelegate onDebugLog = msg => Debug.Log(msg);
-    public static event Lib.DebugLogDelegate onDebugErr = msg => Debug.LogError(msg);
+#if UNITY_EDITOR
+    [MenuItem("GameObject/uWindowCapture/Manager", false, 100)]
+    public static void CreateManagerGameObject()
+    {
+        CreateInstance();
+    }
+#endif
+
+    public DebugMode debugModeFromInspector = DebugMode.File;
+    private static DebugMode debugModeFromScript = DebugMode.File;
+    private static bool debugModeChangedFromScript = false;
+    public static DebugMode debugMode
+    {
+        get 
+        { 
+            return debugModeChangedFromScript ? 
+                debugModeFromScript : 
+                instance.debugModeFromInspector;
+        }
+        set 
+        { 
+            debugModeFromScript = value; 
+            debugModeChangedFromScript = true; 
+        }
+    }
+
+    public static event Lib.DebugLogDelegate onDebugLog = OnDebugLog;
+    public static event Lib.DebugLogDelegate onDebugErr = OnDebugErr;
+    [AOT.MonoPInvokeCallback(typeof(Lib.DebugLogDelegate))]
+    private static void OnDebugLog(string msg) { Debug.Log(msg); }
+    [AOT.MonoPInvokeCallback(typeof(Lib.DebugLogDelegate))]
+    private static void OnDebugErr(string msg) { Debug.LogError(msg); }
+
+    public WindowTitlesUpdateTiming windowTitlesUpdateTiming = WindowTitlesUpdateTiming.Manual;
 
     private UwcWindowEvent onWindowAdded_ = new UwcWindowEvent();
     public static UwcWindowEvent onWindowAdded
@@ -42,6 +76,18 @@ public class UwcManager : MonoBehaviour
     public static UwcWindowEvent onWindowRemoved
     {
         get { return instance.onWindowRemoved_; }
+    }
+
+    private UwcWindowEvent onDesktopAdded_ = new UwcWindowEvent();
+    public static UwcWindowEvent onDesktopAdded
+    {
+        get { return instance.onDesktopAdded_; }
+    }
+
+    private UwcWindowEvent onDesktopRemoved_ = new UwcWindowEvent();
+    public static UwcWindowEvent onDesktopRemoved
+    {
+        get { return instance.onDesktopRemoved_; }
     }
 
     private UwcEvent onCursorCaptured_ = new UwcEvent();
@@ -120,6 +166,7 @@ public class UwcManager : MonoBehaviour
         Lib.Update();
         UpdateWindowInfo();
         UpdateMessages();
+        UpdateWindowTitles();
     }
 
     void UpdateWindowInfo()
@@ -146,8 +193,10 @@ public class UwcManager : MonoBehaviour
                     var window = AddWindow(id);
                     if (window.isAlive && window.isDesktop) {
                         desktops_.Add(id);
+                        onDesktopAdded.Invoke(window);
+                    } else {
+                        onWindowAdded.Invoke(window);
                     }
-                    onWindowAdded.Invoke(window);
                     break;
                 }
                 case MessageType.WindowRemoved: {
@@ -157,11 +206,13 @@ public class UwcManager : MonoBehaviour
                         if (window.parentWindow != null) {
                             window.parentWindow.onChildRemoved.Invoke(window);
                         }
+                        windows.Remove(id);
                         if (window.isAlive && window.isDesktop) {
                             desktops_.Remove(id);
+                            onDesktopRemoved.Invoke(window);
+                        } else {
+                            onWindowRemoved.Invoke(window);
                         }
-                        onWindowRemoved.Invoke(window);
-                        windows.Remove(id);
                     }
                     break;
                 }
@@ -194,6 +245,20 @@ public class UwcManager : MonoBehaviour
                     break;
                 }
             }
+        }
+    }
+
+    void UpdateWindowTitles()
+    {
+        switch (windowTitlesUpdateTiming) {
+            case WindowTitlesUpdateTiming.Manual:
+                break;
+            case WindowTitlesUpdateTiming.AlwaysAllWindows:
+                UpdateAllWindowTitles();
+                break;
+            case WindowTitlesUpdateTiming.AlwaysAltTabWindows:
+                UpdateAltTabWindowTitles();
+                break;
         }
     }
 

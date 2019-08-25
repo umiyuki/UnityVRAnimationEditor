@@ -161,24 +161,44 @@ public class UwcWindow
         get { return Lib.GetWindowClassName(id); } 
     }
 
-    public int x
+    public int rawX
     {
         get { return Lib.GetWindowX(id); }
     }
 
-    public int y
+    public int rawY
     {
         get { return Lib.GetWindowY(id); }
     }
 
-    public int width
+    public int rawWidth
     {
         get { return Lib.GetWindowWidth(id); }
     }
 
-    public int height
+    public int rawHeight
     {
         get { return Lib.GetWindowHeight(id); }
+    }
+
+    public int x
+    {
+        get { return rawX + Lib.GetWindowTextureOffsetX(id); }
+    }
+
+    public int y
+    {
+        get { return rawY + Lib.GetWindowTextureOffsetY(id); }
+    }
+
+    public int width
+    {
+        get { return Lib.GetWindowTextureWidth(id); }
+    }
+
+    public int height
+    {
+        get { return Lib.GetWindowTextureHeight(id); }
     }
 
     public int zOrder
@@ -186,14 +206,19 @@ public class UwcWindow
         get { return Lib.GetWindowZOrder(id); }
     }
 
-    public int bufferWidth
+    public System.IntPtr buffer
     {
-        get { return Lib.GetWindowBufferWidth(id); }
+        get { return Lib.GetWindowBuffer(id); }
     }
 
-    public int bufferHeight
+    public int textureOffsetX
     {
-        get { return Lib.GetWindowBufferHeight(id); }
+        get { return Lib.GetWindowTextureOffsetX(id); }
+    }
+
+    public int textureOffsetY
+    {
+        get { return Lib.GetWindowTextureOffsetY(id); }
     }
 
     public int iconWidth
@@ -312,8 +337,8 @@ public class UwcWindow
 
     void CreateWindowTexture()
     {
-        var w = bufferWidth;
-        var h = bufferHeight;
+        var w = width;
+        var h = height;
         if (w == 0 || h == 0) return;
 
         if (!texture || texture.width != w || texture.height != h) {
@@ -347,6 +372,21 @@ public class UwcWindow
         iconTexture_.filterMode = FilterMode.Point;
         Lib.SetWindowIconTexturePtr(id, iconTexture_.GetNativeTexturePtr());
         errorIconTexture_ = Resources.Load<Texture2D>("uWindowCapture/Textures/uWC_No_Image");
+    }
+
+    public Color32[] GetPixels(int x, int y, int width, int height)
+    {
+        return Lib.GetWindowPixels(id, x, y, width, height);
+    }
+
+    public bool GetPixels(Color32[] colors, int x, int y, int width, int height)
+    {
+        return Lib.GetWindowPixels(id, colors, x, y, width, height);
+    }
+
+    public Color32 GetPixel(int x, int y)
+    {
+        return Lib.GetWindowPixel(id, x, y);
     }
 }
 

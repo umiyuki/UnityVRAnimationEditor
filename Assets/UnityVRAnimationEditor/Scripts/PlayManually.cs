@@ -11,6 +11,7 @@ public class PlayManually : MonoBehaviour
     public float nowFrameTime = 0f;
 
     int lastTimeFrame = 0;
+    bool goLoop = false;
 
     // Update is called once per frame
     void Update()
@@ -23,31 +24,38 @@ public class PlayManually : MonoBehaviour
             return;
         }
 
-        if (wAnimationWindowHelper.IsRecording())
+        //if (wAnimationWindowHelper.IsRecording())
+        //{
+        /*
+        Debug.Log("start");
+        foreach (var animEvent in clip.events)
         {
-            Debug.Log("start");
-            foreach (var animEvent in clip.events)
-            {
-                Debug.Log(animEvent.time);
-            }
+            Debug.Log(animEvent.time);
+        }*/
 
-            /*
-            int currentFrame = wAnimationWindowHelper.GetCurrentFrame();
+        /*
+        int currentFrame = wAnimationWindowHelper.GetCurrentFrame();
 
-            while (wAnimationWindowHelper.GetCurrentFrame() > lastTimeFrame + 2)//フレームスキップが起きてる
-            {
-                
-                //戻す
-                wAnimationWindowHelper.PreviousFrame();
-                //wAnimationWindowHelper.SetCurrentFrame(lastTimeFrame + 1);
-                //wAnimationWindowHelper.ResampleAnimation();
-                Debug.Log(wAnimationWindowHelper.GetCurrentFrame());
-            }
+        while (wAnimationWindowHelper.GetCurrentFrame() > lastTimeFrame + 2)//フレームスキップが起きてる
+        {
 
-            lastTimeFrame = currentFrame;*/
+            //戻す
+            wAnimationWindowHelper.PreviousFrame();
+            //wAnimationWindowHelper.SetCurrentFrame(lastTimeFrame + 1);
+            //wAnimationWindowHelper.ResampleAnimation();
+            Debug.Log(wAnimationWindowHelper.GetCurrentFrame());
+        }
 
+        lastTimeFrame = currentFrame;*/
 
-            if (nowFrameTime > nextFrameTime)
+        if (goLoop)
+        {
+            wAnimationWindowHelper.SetCurrentFrame(0);
+            nowFrameTime = 0;
+            nextFrameTime = 0;
+            goLoop = false;
+        }
+            else if (nowFrameTime > nextFrameTime)
             {
                 //ループ処理
                 int finalFrame = Mathf.RoundToInt(clip.length * clip.frameRate);
@@ -59,16 +67,11 @@ public class PlayManually : MonoBehaviour
 
                 if (currentFrame >= finalFrame)
                 {
-                    wAnimationWindowHelper.SetCurrentFrame(0);
-                    nowFrameTime = 0;
-                    nextFrameTime = 0;
+                    goLoop = true;
                 }
-                else
-                {
                     animationWindowController.PressNextFrame();
                     //wAnimationWindowHelper.NextFrame();
                     //wAnimationWindowHelper.GoToTime(nowFrameTime);
-                }
 
                 nextFrameTime += 1f / (float)clip.frameRate;
             }
@@ -79,7 +82,7 @@ public class PlayManually : MonoBehaviour
             }
 
             nowFrameTime += Time.deltaTime;
-        }
+        //}
 
         /*
         if (nowFrameTime >= nextFrameTime)

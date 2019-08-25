@@ -65,7 +65,6 @@ public class UwcWindowTextureChildrenManager : MonoBehaviour
 
     void OnChildAdded(UwcWindow window)
     {
-        Debug.Log("OnChildAdded");
         var childWindowTexture = InstantiateChild();
         if (!childWindowTexture) {
             Debug.LogError("childPrefab is not set or does not have UwcWindowTexture.");
@@ -108,14 +107,20 @@ public class UwcWindowTextureChildrenManager : MonoBehaviour
         var dz = windowTexture_.childWindowZDistance;
         var desktopX = (cw - pw) * 0.5f + (cx - px);
         var desktopY = (ch - ph) * 0.5f + (cy - py);
-        var localX = desktopX / parent.width;
-        var localY = -desktopY / parent.height;
-        var localZ = dz * (window.zOrder - window.parentWindow.zOrder) / transform.localScale.z;
-        child.transform.localPosition = new Vector3(localX, localY, localZ);
+            if (parent.width != 0 && parent.height != 0)
+            {
+                var localX = desktopX / parent.width;
+                var localY = -desktopY / parent.height;
+                var localZ = dz * (window.zOrder - window.parentWindow.zOrder) / transform.localScale.z;
+                child.transform.localPosition = new Vector3(localX, localY, localZ);
+            }
 
-        var widthRatio = 1f * window.width / window.parentWindow.width;
-        var heightRatio = 1f * window.height / window.parentWindow.height;
-        child.transform.localScale = new Vector3(widthRatio, heightRatio, 1f);
+            if (window.parentWindow.width != 0 && window.parentWindow.height != 0)
+            {
+                var widthRatio = 1f * window.width / window.parentWindow.width;
+                var heightRatio = 1f * window.height / window.parentWindow.height;
+                child.transform.localScale = new Vector3(widthRatio, heightRatio, 1f);
+            }
     }
 
     void UpdateChildren()

@@ -26,6 +26,20 @@ public enum WindowTextureScaleControlType
     Manual = 3,
 }
 
+public enum WindowSearchTiming
+{
+    Always = 0,
+    Manual = 1,
+    OnlyWhenParameterChanged = 2,
+}
+
+public enum WindowTitlesUpdateTiming
+{
+    Manual = 0,
+    AlwaysAllWindows = 1,
+    AlwaysAltTabWindows = 2,
+}
+
 public class UwcEvent : UnityEvent
 {
 }

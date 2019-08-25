@@ -43,14 +43,14 @@ public class BothGripScaleRotateRootObject : MonoBehaviour
         }
 
         //移動させる
-        if (!VRTK_SDK_Bridge.GetControllerButtonState(SDK_BaseController.ButtonTypes.Touchpad, SDK_BaseController.ButtonPressTypes.Touch, leftReference) && !VRTK_SDK_Bridge.GetControllerButtonState(SDK_BaseController.ButtonTypes.Touchpad, SDK_BaseController.ButtonPressTypes.Touch, rightReference))
-        {
+        /*if (!VRTK_SDK_Bridge.GetControllerButtonState(SDK_BaseController.ButtonTypes.Touchpad, SDK_BaseController.ButtonPressTypes.Touch, leftReference) && !VRTK_SDK_Bridge.GetControllerButtonState(SDK_BaseController.ButtonTypes.Touchpad, SDK_BaseController.ButtonPressTypes.Touch, rightReference))
+        {*/
             rootObjectT.position = Vector3.Lerp(rootObjectT.position, targetPosition, Time.deltaTime * lerpFactor);
-        }
+        /*}
         else
         {
             targetPosition = rootObjectT.position;
-        }
+        }*/
 
 
         //両手のグリップ押してる

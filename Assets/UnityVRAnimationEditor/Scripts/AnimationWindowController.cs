@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AnimationWindowController : MonoBehaviour {
 
@@ -10,11 +11,18 @@ public class AnimationWindowController : MonoBehaviour {
     bool init = false;
     WindowsInput.InputSimulator inputSimulator;
 
+    [SerializeField] RawImage targetRawImage;
+    [SerializeField] Material targetMaterial;
+    [SerializeField] UnityEditor.Experimental.EditorVR.Helpers.EditorWindowCapture editorWindowCapture;
+    [SerializeField] PlayManually playManually;
+
     // Use this for initialization
     IEnumerator Start () { 
+        
         wAnimationWindowHelper.init();
         inputSimulator = new WindowsInput.InputSimulator();
 
+        /*
         var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene(); //現在のシーンを取得
         string activeSceneName = activeScene.name;
         if (activeSceneName == string.Empty)
@@ -53,6 +61,12 @@ public class AnimationWindowController : MonoBehaviour {
         setWindowObject.GetComponent<MeshRenderer>().sharedMaterial = material;//取得したマテリアルをセット
 
         getWindowObject.GetComponent<uWindowCapture.UwcWindowTexture>().captureRequestTiming = uWindowCapture.WindowTextureCaptureTiming.Manual;//もうUnity本体のウインドウは更新不要
+        */
+
+        while (targetRawImage.texture == null)
+        {
+            yield return null;
+        }
 
         init = true;
     }
@@ -61,6 +75,25 @@ public class AnimationWindowController : MonoBehaviour {
 	void Update () {
         if (!init) { return; }
 
+        //ウインドウのサイズ調整
+        float width = (float)editorWindowCapture.m_Position.width / 1500f;
+        float height = (float)editorWindowCapture.m_Position.height / 1500f;
+        if (editorWindowCapture.m_Position.width == 0)
+        {
+            width = 0.5f;
+        }
+        if (editorWindowCapture.m_Position.height == 0)
+        {
+            height = 0.5f;
+        }
+        setWindowObject.transform.localScale = new Vector3(width, height, 1f);
+
+        //ウインドウの位置調整
+        var pos = setWindowObject.transform.localPosition;
+        pos.z = 0.04f + height * 0.5f;
+        setWindowObject.transform.localPosition = pos;
+
+        /*
         //ウインドウのサイズ調整
         float width = (float)childWindow.window.width / 1500f;
         float height = (float)childWindow.window.height / 1500f;
@@ -78,6 +111,7 @@ public class AnimationWindowController : MonoBehaviour {
         var pos = setWindowObject.transform.localPosition;
         pos.z = 0.04f + height * 0.5f;
         setWindowObject.transform.localPosition = pos;
+        */
 
         /*
         if (Input.GetKeyDown(KeyCode.F))
@@ -91,12 +125,13 @@ public class AnimationWindowController : MonoBehaviour {
 
     public Vector2? GetMousePosFromUV(Vector2 textureCoord)
     {
-        if (childWindow == null) { return null; }
+        //if (childWindow == null) { return null; }
         //Debug.Log(textureCoord);
-        var windowLocalX = (int)(textureCoord.x * childWindow.window.width);
-        var windowLocalY = (int)(textureCoord.y * childWindow.window.height);
-        var desktopX = childWindow.window.x + windowLocalX;
-        var desktopY = childWindow.window.y + windowLocalY;
+        var rect = editorWindowCapture.m_Position;
+        var windowLocalX = (int)(textureCoord.x * rect.width);
+        var windowLocalY = (int)(textureCoord.y * rect.height);
+        var desktopX = rect.x + windowLocalX;
+        var desktopY = rect.y + windowLocalY;
         Vector2 desktopPos = new Vector2(desktopX, desktopY);
 
         return desktopPos;
@@ -220,6 +255,7 @@ public class AnimationWindowController : MonoBehaviour {
 
     public void TogglePlaying()
     {
+        /*
         if (wAnimationWindowHelper.IsPlaying())
         {
             wAnimationWindowHelper.StopPlayback();
@@ -227,7 +263,10 @@ public class AnimationWindowController : MonoBehaviour {
         else
         {
             wAnimationWindowHelper.StartPlayback();
-        }
+        }*/
+
+        playManually.isPlay = !playManually.isPlay;
+
     }
 
     public void ToggleRecording()

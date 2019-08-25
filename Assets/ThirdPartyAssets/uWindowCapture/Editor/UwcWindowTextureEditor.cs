@@ -50,17 +50,6 @@ public class UwcWindowTextureEditor : Editor
     SerializedProperty scaleControlType;
     SerializedProperty scalePer1000Pixel;
 
-    void Fold(string name, ref bool folded, System.Action func)
-    {
-        folded = EditorUtils.Foldout(name, folded);
-        if (folded)
-        {
-            ++EditorGUI.indentLevel;
-            func();
-            --EditorGUI.indentLevel;
-        }
-    }
-
     void OnEnable()
     {
         updateTitle = serializedObject.FindProperty("updateTitle");
@@ -82,10 +71,10 @@ public class UwcWindowTextureEditor : Editor
         serializedObject.Update();
         {
             EditorGUILayout.Space();
-            Fold("Target", ref targetFold_, () => { DrawTargetSettings(); });
-            Fold("Capture Settings", ref captureSettingFold_, () => { DrawCaptureSettings(); });
-            Fold("Scale Settings", ref scaleSettingFold_, () => { DrawScaleSettings(); });
-            Fold("Window Information", ref windowInformationFold_, () => { DrawWindowInformation(); });
+            EditorUtils.Fold("Target", ref targetFold_, () => { DrawTargetSettings(); });
+            EditorUtils.Fold("Capture Settings", ref captureSettingFold_, () => { DrawCaptureSettings(); });
+            EditorUtils.Fold("Scale Settings", ref scaleSettingFold_, () => { DrawScaleSettings(); });
+            EditorUtils.Fold("Window Information", ref windowInformationFold_, () => { DrawWindowInformation(); });
         }
         serializedObject.ApplyModifiedProperties();
 
@@ -105,6 +94,12 @@ public class UwcWindowTextureEditor : Editor
         if (type != texture.type) {
             Undo.RecordObject(target, "Inspector");
             texture.type = type;
+        }
+
+        var searchTiming = (WindowSearchTiming)EditorGUILayout.EnumPopup("Search Timing", texture.searchTiming);
+        if (searchTiming != texture.searchTiming) {
+            Undo.RecordObject(target, "Inspector");
+            texture.searchTiming = searchTiming;
         }
 
         switch (type)
@@ -186,8 +181,6 @@ public class UwcWindowTextureEditor : Editor
         EditorGUILayout.IntField("Window Width", window.width);
         EditorGUILayout.IntField("Window Height", window.height);
         EditorGUILayout.IntField("Window Z-Order", window.zOrder);
-        EditorGUILayout.IntField("Buffer Width", window.bufferWidth);
-        EditorGUILayout.IntField("Buffer Height", window.bufferHeight);
         EditorGUILayout.Toggle("Alt-Tab Window", window.isAltTabWindow);
         EditorGUILayout.Toggle("Minimized", window.isMinimized);
         EditorGUILayout.Toggle("Maximized", window.isMaximized);
