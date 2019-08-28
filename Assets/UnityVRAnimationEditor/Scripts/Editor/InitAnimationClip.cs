@@ -48,7 +48,7 @@ public class InitAnimationClip
                 {
                     setPath = child.name;
                 }
-                SetCurve(setPath, child);
+                SetCurve(0f,setPath, child);
             }
             if (child.childCount > 0)
             {
@@ -62,11 +62,11 @@ public class InitAnimationClip
         }
     }
 
-    static void SetCurve(string path, Transform t)
+    public static void SetCurve(float time, string path, Transform t)
     {
         Quaternion rot = t.localRotation;
         AnimationCurve curve = new AnimationCurve();
-        curve.AddKey(0f, rot.x);
+        curve.AddKey(time, rot.x);
         //clip.SetCurve(path, typeof(Transform), "localRotation.x", curve);
         EditorCurveBinding curveBinding = new EditorCurveBinding();
         curveBinding.path = path;
@@ -75,7 +75,7 @@ public class InitAnimationClip
         AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
 
         curve = new AnimationCurve();
-        curve.AddKey(0f, rot.y);
+        curve.AddKey(time, rot.y);
         //clip.SetCurve(path, typeof(Transform), "localRotation.y", curve);
         curveBinding = new EditorCurveBinding();
         curveBinding.path = path;
@@ -84,7 +84,7 @@ public class InitAnimationClip
         AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
 
         curve = new AnimationCurve();
-        curve.AddKey(0f, rot.z);
+        curve.AddKey(time, rot.z);
         //clip.SetCurve(path, typeof(Transform), "localRotation.z", curve);
         curveBinding = new EditorCurveBinding();
         curveBinding.path = path;
@@ -105,7 +105,7 @@ public class InitAnimationClip
 
         Vector3 pos = t.localPosition;
         curve = new AnimationCurve();
-        curve.AddKey(0f, pos.x);
+        curve.AddKey(time, pos.x);
         //clip.SetCurve(path, typeof(Transform), "localPosition.x", curve);
         curveBinding = new EditorCurveBinding();
         curveBinding.path = path;
@@ -114,7 +114,7 @@ public class InitAnimationClip
         AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
 
         curve = new AnimationCurve();
-        curve.AddKey(0f, pos.y);
+        curve.AddKey(time, pos.y);
         //clip.SetCurve(path, typeof(Transform), "localPosition.y", curve);
         curveBinding = new EditorCurveBinding();
         curveBinding.path = path;
@@ -123,7 +123,7 @@ public class InitAnimationClip
         AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
 
         curve = new AnimationCurve();
-        curve.AddKey(0f, pos.z);
+        curve.AddKey(time, pos.z);
         //clip.SetCurve(path, typeof(Transform), "localPosition.z", curve);
         curveBinding = new EditorCurveBinding();
         curveBinding.path = path;
@@ -133,7 +133,7 @@ public class InitAnimationClip
 
         Vector3 scale = t.localScale;
         curve = new AnimationCurve();
-        curve.AddKey(0f, scale.x);
+        curve.AddKey(time, scale.x);
         //clip.SetCurve(path, typeof(Transform), "localScale.x", curve);
         curveBinding = new EditorCurveBinding();
         curveBinding.path = path;
@@ -142,7 +142,7 @@ public class InitAnimationClip
         AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
 
         curve = new AnimationCurve();
-        curve.AddKey(0f, scale.y);
+        curve.AddKey(time, scale.y);
         //clip.SetCurve(path, typeof(Transform), "localScale.y", curve);
         curveBinding = new EditorCurveBinding();
         curveBinding.path = path;
@@ -151,7 +151,7 @@ public class InitAnimationClip
         AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
 
         curve = new AnimationCurve();
-        curve.AddKey(0f, scale.z);
+        curve.AddKey(time, scale.z);
         //clip.SetCurve(path, typeof(Transform), "localScale.z", curve);
         curveBinding = new EditorCurveBinding();
         curveBinding.path = path;

@@ -90,7 +90,7 @@ public class AnimationWindowController : MonoBehaviour {
 
         //ウインドウの位置調整
         var pos = setWindowObject.transform.localPosition;
-        pos.z = 0.04f + height * 0.5f;
+        pos.z = 0.10f + height * 0.5f;
         setWindowObject.transform.localPosition = pos;
 
         /*
@@ -265,7 +265,7 @@ public class AnimationWindowController : MonoBehaviour {
             wAnimationWindowHelper.StartPlayback();
         }*/
 
-        playManually.isPlay = !playManually.isPlay;
+        playManually.TogglePlay();
 
     }
 

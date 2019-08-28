@@ -32,6 +32,8 @@ public class GenerateNodes : MonoBehaviour {
     Vector3[] tempChildScales;
     int undoID = 0;
 
+    public float nodeSize = 0.1f;
+
     public bool IsShowNodeName = true; //ノード名を表示するか否か
 
 	// Use this for initialization
@@ -105,6 +107,7 @@ public class GenerateNodes : MonoBehaviour {
             node.highlightedMaterial = hilightedMaterial;
             nodeObject.GetComponent<MeshFilter>().sharedMesh = wireframeCubeMesh;
             node.generateNodes = this;
+            node.colliderSize = nodeSize;
             if (IsShowNodeName)
             {
                 nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().SetText(obj.name);
