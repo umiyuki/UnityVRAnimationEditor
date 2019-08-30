@@ -16,6 +16,8 @@ public class PlayManually : MonoBehaviour
     int lastTimeFrame = 0;
     bool goLoop = false;
 
+    float playSpeed = 1f;
+
     [SerializeField] GameObject textPlayingObject;
 
     public void TogglePlay()
@@ -142,7 +144,7 @@ public class PlayManually : MonoBehaviour
         }
 
         prevFrameTime = nowFrameTime;
-        nowFrameTime += Time.deltaTime;
+        nowFrameTime += Time.deltaTime * playSpeed;
 
         if (nowFrameTime >= clip.length)
         {
@@ -180,5 +182,10 @@ public class PlayManually : MonoBehaviour
         nowFrameTime += Time.deltaTime;
         */
 
+    }
+
+    public void OnChangePlaySpeed(float value)
+    {
+        playSpeed = value;
     }
 }

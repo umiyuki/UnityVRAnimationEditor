@@ -173,11 +173,22 @@ public class Node : MonoBehaviour {
 
         AnimationClip clip = wAnimationWindowHelper.GetAnimationWindowCurrentClip();
         if (clip == null) { return; }
-        if (clip.length < wAnimationWindowHelper.GetCurrentTime()) { return; } //クリップが終了してたら
+        if (PlayManually.IsPlaying() && clip.length < wAnimationWindowHelper.GetCurrentTime()) { return; } //クリップが終了してたら
 
         Transform rootObjectTransform = wAnimationWindowHelper.GetAnimationWindowCurrentRootGameObject().transform;
         string path = AnimationRecorderHelper.GetTransformPathName(rootObjectTransform, followTarget.transform);
-        SetCurve(PlayManually.nowFrameTime,clip, path, followTarget.transform);
+
+        float time;
+        if (PlayManually.IsPlaying())
+        {
+            time = PlayManually.nowFrameTime;
+        }
+        else
+        {
+            time =wAnimationWindowHelper.GetCurrentTime();
+        }
+
+        SetCurve(time,clip, path, followTarget.transform);
 
         /*
         followTarget.localPosition = tempPosition;

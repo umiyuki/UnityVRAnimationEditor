@@ -1,17 +1,22 @@
 /************************************************************************************
-Copyright : Copyright (c) Facebook Technologies, LLC and its affiliates. All rights reserved.
 
-Licensed under the Oculus Utilities SDK License Version 1.31 (the "License"); you may not use
-the Utilities SDK except in compliance with the License, which is provided at the time of installation
-or download, or which otherwise accompanies this software in either electronic or hard copy form.
+Copyright   :   Copyright 2017 Oculus VR, LLC. All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.4.1 (the "License");
+you may not use the Oculus VR Rift SDK except in compliance with the License,
+which is provided at the time of installation or download, or which
+otherwise accompanies this software in either electronic or hard copy form.
 
 You may obtain a copy of the License at
-https://developer.oculus.com/licenses/utilities-1.31
 
-Unless required by applicable law or agreed to in writing, the Utilities SDK distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-ANY KIND, either express or implied. See the License for the specific language governing
-permissions and limitations under the License.
+https://developer.oculus.com/licenses/sdk-3.4.1
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
 ************************************************************************************/
 
 using UnityEngine;
@@ -42,11 +47,11 @@ public class OVRGridCube : MonoBehaviour
 
 	// Handle to OVRCameraRig
 	private OVRCameraRig CameraController = null;
-
+	
 	/// <summary>
 	/// Update this instance.
 	/// </summary>
-	void Update ()
+	void Update () 
 	{
 		UpdateCubeGrid();
 	}
@@ -70,7 +75,7 @@ public class OVRGridCube : MonoBehaviour
 				CubeGridOn = true;
 				Debug.LogWarning("CubeGrid ON");
 				if(CubeGrid != null)
-					CubeGrid.SetActive(true);
+					CubeGrid.SetActive(true);	
 				else
 					CreateCubeGrid();
 			}
@@ -78,17 +83,17 @@ public class OVRGridCube : MonoBehaviour
 			{
 				CubeGridOn = false;
 				Debug.LogWarning("CubeGrid OFF");
-
+				
 				if(CubeGrid != null)
 					CubeGrid.SetActive(false);
 			}
 		}
-
+		
 		if(CubeGrid != null)
 		{
 			// Set cube colors to let user know if camera is tracking
 			CubeSwitchColor = !OVRManager.tracker.isPositionTracked;
-
+			
 			if(CubeSwitchColor != CubeSwitchColorOld)
 				CubeGridSwitchColor(CubeSwitchColor);
 			CubeSwitchColorOld = CubeSwitchColor;
@@ -120,14 +125,14 @@ public class OVRGridCube : MonoBehaviour
 					else
 						CubeType = 1;
 				}
-
+				
 				GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-
+				
 				BoxCollider bc = cube.GetComponent<BoxCollider>();
 				bc.enabled = false;
-
+				
 				cube.layer = CameraController.gameObject.layer;
-
+				
 				// No shadows
 				Renderer r = cube.GetComponent<Renderer>();
 
@@ -137,38 +142,38 @@ public class OVRGridCube : MonoBehaviour
 #else
 				r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 #endif
-
+                
 				r.receiveShadows = false;
-
+				
 				// Cube line is white down the middle
 				if (CubeType == 0)
 					r.material.color = Color.red;
-				else if (CubeType == 1)
+				else if (CubeType == 1)	
 					r.material.color = Color.white;
 				else
 					r.material.color = Color.yellow;
-
-				cube.transform.position =
-					new Vector3(((float)x * gridScale),
-					            ((float)y * gridScale),
+				
+				cube.transform.position = 
+					new Vector3(((float)x * gridScale), 
+					            ((float)y * gridScale), 
 					            ((float)z * gridScale));
-
+				
 				float s = 0.7f;
-
+				
 				// Axis cubes are bigger
 				if(CubeType == 1)
-					s = 1.0f;
+					s = 1.0f;				
 				// Center cube is the largest
 				if(CubeType == 2)
 					s = 2.0f;
-
-				cube.transform.localScale =
+				
+				cube.transform.localScale = 
 					new Vector3(cubeScale * s, cubeScale * s, cubeScale * s);
-
+				
 				cube.transform.parent = CubeGrid.transform;
 			}
 	}
-
+	
 	/// <summary>
 	/// Switch the Cube grid color.
 	/// </summary>
@@ -178,7 +183,7 @@ public class OVRGridCube : MonoBehaviour
 		Color c = Color.red;
 		if(CubeSwitchColor == true)
 			c = Color.blue;
-
+		
 		foreach(Transform child in CubeGrid.transform)
 		{
 			Material m = child.GetComponent<Renderer>().material;

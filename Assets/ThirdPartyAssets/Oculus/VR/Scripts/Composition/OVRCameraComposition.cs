@@ -1,19 +1,3 @@
-/************************************************************************************
-Copyright : Copyright (c) Facebook Technologies, LLC and its affiliates. All rights reserved.
-
-Licensed under the Oculus Utilities SDK License Version 1.31 (the "License"); you may not use
-the Utilities SDK except in compliance with the License, which is provided at the time of installation
-or download, or which otherwise accompanies this software in either electronic or hard copy form.
-
-You may obtain a copy of the License at
-https://developer.oculus.com/licenses/utilities-1.31
-
-Unless required by applicable law or agreed to in writing, the Utilities SDK distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-ANY KIND, either express or implied. See the License for the specific language governing
-permissions and limitations under the License.
-************************************************************************************/
-
 using UnityEngine;
 using System.Collections;
 
@@ -28,13 +12,14 @@ public abstract class OVRCameraComposition : OVRComposition {
 
 	internal readonly OVRPlugin.CameraDevice cameraDevice = OVRPlugin.CameraDevice.WebCamera0;
 
+	private OVRCameraRig cameraRig;
+
 	private Mesh boundaryMesh = null;
 	private float boundaryMeshTopY = 0.0f;
 	private float boundaryMeshBottomY = 0.0f;
 	private OVRManager.VirtualGreenScreenType boundaryMeshType = OVRManager.VirtualGreenScreenType.Off;
 
-	protected OVRCameraComposition(GameObject parentObject, Camera mainCamera, OVRManager.CameraDevice inCameraDevice, bool inUseDynamicLighting, OVRManager.DepthQuality depthQuality)
-		: base(parentObject, mainCamera)
+	protected OVRCameraComposition(OVRManager.CameraDevice inCameraDevice, bool inUseDynamicLighting, OVRManager.DepthQuality depthQuality)
 	{
 		cameraDevice = OVRCompositionUtil.ConvertCameraDevice(inCameraDevice);
 
@@ -108,7 +93,7 @@ public abstract class OVRCameraComposition : OVRComposition {
 		Debug.Assert(cameraFramePlaneObject == null);
 		cameraFramePlaneObject = GameObject.CreatePrimitive(PrimitiveType.Quad);
 		cameraFramePlaneObject.name = "MRCameraFrame";
-		cameraFramePlaneObject.transform.parent = cameraInTrackingSpace ? cameraRig.trackingSpace : parentObject.transform;
+		cameraFramePlaneObject.transform.parent = parentObject.transform;
 		cameraFramePlaneObject.GetComponent<Collider>().enabled = false;
 		cameraFramePlaneObject.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 		Material cameraFrameMaterial = new Material(Shader.Find(useDynamicLighting ? "Oculus/OVRMRCameraFrameLit" : "Oculus/OVRMRCameraFrame"));
@@ -168,8 +153,17 @@ public abstract class OVRCameraComposition : OVRComposition {
 
 			float cullingDistance = float.MaxValue;
 
+			cameraRig = null;
 			if (OVRManager.instance.virtualGreenScreenType != OVRManager.VirtualGreenScreenType.Off)
 			{
+				cameraRig = mainCamera.GetComponentInParent<OVRCameraRig>();
+				if (cameraRig != null)
+				{
+					if (cameraRig.centerEyeAnchor == null)
+					{
+						cameraRig = null;
+					}
+				}
 				RefreshBoundaryMesh(mixedRealityCamera, out cullingDistance);
 			}
 

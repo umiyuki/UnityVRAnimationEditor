@@ -1,17 +1,23 @@
 /************************************************************************************
-Copyright : Copyright (c) Facebook Technologies, LLC and its affiliates. All rights reserved.
 
-Licensed under the Oculus Utilities SDK License Version 1.31 (the "License"); you may not use
-the Utilities SDK except in compliance with the License, which is provided at the time of installation
-or download, or which otherwise accompanies this software in either electronic or hard copy form.
+Copyright   :   Copyright 2017 Oculus VR, LLC. All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.4.1 (the "License");
+you may not use the Oculus VR Rift SDK except in compliance with the License,
+which is provided at the time of installation or download, or which
+otherwise accompanies this software in either electronic or hard copy form.
 
 You may obtain a copy of the License at
-https://developer.oculus.com/licenses/utilities-1.31
 
-Unless required by applicable law or agreed to in writing, the Utilities SDK distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-ANY KIND, either express or implied. See the License for the specific language governing
-permissions and limitations under the License.
+https://developer.oculus.com/licenses/sdk-3.4.1
+
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
 ************************************************************************************/
 
 using System;
@@ -69,27 +75,17 @@ public class OVRRaycaster : GraphicRaycaster, IPointerEnterHandler
         }
     }
 
-	protected override void Start()
-	{
-		if(!canvas.worldCamera)
-		{
-			Debug.Log("Canvas does not have an event camera attached. Attaching OVRCameraRig.centerEyeAnchor as default.");
-			OVRCameraRig rig = FindObjectOfType<OVRCameraRig>();
-			canvas.worldCamera = rig.centerEyeAnchor.gameObject.GetComponent<Camera>();
-		}
-	}
-
-	/// <summary>
-	/// For the given ray, find graphics on this canvas which it intersects and are not blocked by other
-	/// world objects
-	/// </summary>
-	[NonSerialized]
+    /// <summary>
+    /// For the given ray, find graphics on this canvas which it intersects and are not blocked by other
+    /// world objects
+    /// </summary>
+    [NonSerialized]
     private List<RaycastHit> m_RaycastResults = new List<RaycastHit>();
     private void Raycast(PointerEventData eventData, List<RaycastResult> resultAppendList, Ray ray, bool checkForBlocking)
     {
-        //This function is closely based on
+        //This function is closely based on 
         //void GraphicRaycaster.Raycast(PointerEventData eventData, List<RaycastResult> resultAppendList)
-
+        
         if (canvas == null)
             return;
 
@@ -180,7 +176,7 @@ public class OVRRaycaster : GraphicRaycaster, IPointerEnterHandler
         }
     }
     /// <summary>
-    /// Performs a raycast using the pointer object attached to this OVRRaycaster
+    /// Performs a raycast using the pointer object attached to this OVRRaycaster 
     /// </summary>
     /// <param name="eventData"></param>
     /// <param name="resultAppendList"></param>
@@ -192,7 +188,7 @@ public class OVRRaycaster : GraphicRaycaster, IPointerEnterHandler
         }
     }
 
-
+   
     /// <summary>
     /// Perform a raycast into the screen and collect all graphics underneath it.
     /// </summary>
@@ -252,7 +248,7 @@ public class OVRRaycaster : GraphicRaycaster, IPointerEnterHandler
 
 
     /// <summary>
-    /// Detects whether a ray intersects a RectTransform and if it does also
+    /// Detects whether a ray intersects a RectTransform and if it does also 
     /// returns the world position of the intersection.
     /// </summary>
     /// <param name="rectTransform"></param>
@@ -311,18 +307,14 @@ public class OVRRaycaster : GraphicRaycaster, IPointerEnterHandler
         OVRInputModule inputModule = EventSystem.current.currentInputModule as OVRInputModule;
         return inputModule && inputModule.activeGraphicRaycaster == this;
     }
-
+    
     public void OnPointerEnter(PointerEventData e)
     {
         if (e.IsVRPointer())
         {
             // Gaze has entered this canvas. We'll make it the active one so that canvas-mouse pointer can be used.
             OVRInputModule inputModule = EventSystem.current.currentInputModule as OVRInputModule;
-            if(inputModule != null)
-            {
-                inputModule.activeGraphicRaycaster = this;
-            }
-
+            inputModule.activeGraphicRaycaster = this;
         }
     }
 }

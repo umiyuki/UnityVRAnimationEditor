@@ -65,8 +65,10 @@ public class InitAnimationClip
     public static void SetCurve(float time, string path, Transform t)
     {
         Quaternion rot = t.localRotation;
+        Vector3 eulerAngles = rot.eulerAngles;
+
         AnimationCurve curve = new AnimationCurve();
-        curve.AddKey(time, rot.x);
+        curve.AddKey(time, eulerAngles.x);
         //clip.SetCurve(path, typeof(Transform), "localRotation.x", curve);
         EditorCurveBinding curveBinding = new EditorCurveBinding();
         curveBinding.path = path;
@@ -75,7 +77,7 @@ public class InitAnimationClip
         AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
 
         curve = new AnimationCurve();
-        curve.AddKey(time, rot.y);
+        curve.AddKey(time, eulerAngles.y);
         //clip.SetCurve(path, typeof(Transform), "localRotation.y", curve);
         curveBinding = new EditorCurveBinding();
         curveBinding.path = path;
@@ -84,7 +86,7 @@ public class InitAnimationClip
         AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
 
         curve = new AnimationCurve();
-        curve.AddKey(time, rot.z);
+        curve.AddKey(time, eulerAngles.z);
         //clip.SetCurve(path, typeof(Transform), "localRotation.z", curve);
         curveBinding = new EditorCurveBinding();
         curveBinding.path = path;

@@ -12,7 +12,6 @@ public class AnimationWindowController : MonoBehaviour {
     WindowsInput.InputSimulator inputSimulator;
 
     [SerializeField] RawImage targetRawImage;
-    [SerializeField] Material targetMaterial;
     [SerializeField] UnityEditor.Experimental.EditorVR.Helpers.EditorWindowCapture editorWindowCapture;
     [SerializeField] PlayManually playManually;
 

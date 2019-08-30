@@ -2,7 +2,7 @@
     Properties{
         _MainTex("Base (RGB) Trans (A)", 2D) = "white" {}
         _linearToSrgb("Perform linear-to-gamma conversion", Int) = 0
-        _premultiply("Pre-multiply alpha", Int) = 0
+        _premultiply("Pre-multiply alpha", Int) = 1
     }
     SubShader{
         Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }

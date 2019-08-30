@@ -1,19 +1,3 @@
-/************************************************************************************
-Copyright : Copyright (c) Facebook Technologies, LLC and its affiliates. All rights reserved.
-
-Licensed under the Oculus Utilities SDK License Version 1.31 (the "License"); you may not use
-the Utilities SDK except in compliance with the License, which is provided at the time of installation
-or download, or which otherwise accompanies this software in either electronic or hard copy form.
-
-You may obtain a copy of the License at
-https://developer.oculus.com/licenses/utilities-1.31
-
-Unless required by applicable law or agreed to in writing, the Utilities SDK distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-ANY KIND, either express or implied. See the License for the specific language governing
-permissions and limitations under the License.
-************************************************************************************/
-
 using UnityEngine;
 using System;
 using System.IO;
@@ -141,7 +125,6 @@ public static class OVRHaptics
 		}
 
 		private bool m_lowLatencyMode = true;
-		private bool m_paddingEnabled = true;
 		private int m_prevSamplesQueued = 0;
 		private float m_prevSamplesQueuedTime = 0;
 		private int m_numPredictionHits = 0;
@@ -154,9 +137,6 @@ public static class OVRHaptics
 
 		public OVRHapticsOutput(uint controller)
 		{
-#if UNITY_ANDROID
-			m_paddingEnabled = false;
-#endif
 			m_controller = controller;
 		}
 
@@ -243,23 +223,20 @@ public static class OVRHaptics
 					m_pendingClips.RemoveAt(i);
 			}
 
-			if (m_paddingEnabled)
+			int desiredPadding = desiredSamplesCount - (hapticsState.SamplesQueued + acquiredSamplesCount);
+			if (desiredPadding < (OVRHaptics.Config.MinimumBufferSamplesCount - acquiredSamplesCount))
+				desiredPadding = (OVRHaptics.Config.MinimumBufferSamplesCount - acquiredSamplesCount);
+			if (desiredPadding > hapticsState.SamplesAvailable)
+				desiredPadding = hapticsState.SamplesAvailable;
+
+			if (desiredPadding > 0)
 			{
-				int desiredPadding = desiredSamplesCount - (hapticsState.SamplesQueued + acquiredSamplesCount);
-				if (desiredPadding < (OVRHaptics.Config.MinimumBufferSamplesCount - acquiredSamplesCount))
-					desiredPadding = (OVRHaptics.Config.MinimumBufferSamplesCount - acquiredSamplesCount);
-				if (desiredPadding > hapticsState.SamplesAvailable)
-					desiredPadding = hapticsState.SamplesAvailable;
+				int numBytes = desiredPadding * OVRHaptics.Config.SampleSizeInBytes;
+				int dstOffset = acquiredSamplesCount * OVRHaptics.Config.SampleSizeInBytes;
+				int srcOffset = 0;
+				Marshal.Copy(m_paddingClip.Samples, srcOffset, m_nativeBuffer.GetPointer(dstOffset), numBytes);
 
-				if (desiredPadding > 0)
-				{
-					int numBytes = desiredPadding * OVRHaptics.Config.SampleSizeInBytes;
-					int dstOffset = acquiredSamplesCount * OVRHaptics.Config.SampleSizeInBytes;
-					int srcOffset = 0;
-					Marshal.Copy(m_paddingClip.Samples, srcOffset, m_nativeBuffer.GetPointer(dstOffset), numBytes);
-
-					acquiredSamplesCount += desiredPadding;
-				}
+				acquiredSamplesCount += desiredPadding;
 			}
 
 			if (acquiredSamplesCount > 0)
@@ -267,7 +244,7 @@ public static class OVRHaptics
 				OVRPlugin.HapticsBuffer hapticsBuffer;
 				hapticsBuffer.Samples = m_nativeBuffer.GetPointer();
 				hapticsBuffer.SamplesCount = acquiredSamplesCount;
-
+	
 				OVRPlugin.SetControllerHaptics(m_controller, hapticsBuffer);
 
 				hapticsState = OVRPlugin.GetControllerHapticsState(m_controller);
@@ -340,7 +317,7 @@ public static class OVRHaptics
 							{
 								sample = b.Samples[bReadCount]; // TODO support multi-byte samples
 							}
-
+	
 							mixClip.WriteSample(sample); // TODO support multi-byte samples
 						}
 					}
@@ -386,3 +363,4 @@ public static class OVRHaptics
 		}
 	}
 }
+

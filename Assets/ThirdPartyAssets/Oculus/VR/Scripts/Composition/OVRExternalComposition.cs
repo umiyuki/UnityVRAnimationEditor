@@ -1,19 +1,3 @@
-/************************************************************************************
-Copyright : Copyright (c) Facebook Technologies, LLC and its affiliates. All rights reserved.
-
-Licensed under the Oculus Utilities SDK License Version 1.31 (the "License"); you may not use
-the Utilities SDK except in compliance with the License, which is provided at the time of installation
-or download, or which otherwise accompanies this software in either electronic or hard copy form.
-
-You may obtain a copy of the License at
-https://developer.oculus.com/licenses/utilities-1.31
-
-Unless required by applicable law or agreed to in writing, the Utilities SDK distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-ANY KIND, either express or implied. See the License for the specific language governing
-permissions and limitations under the License.
-************************************************************************************/
-
 using UnityEngine;
 using System.Collections;
 
@@ -30,12 +14,11 @@ public class OVRExternalComposition : OVRComposition
 	public override OVRManager.CompositionMethod CompositionMethod() { return OVRManager.CompositionMethod.External; }
 
 	public OVRExternalComposition(GameObject parentObject, Camera mainCamera)
-		: base(parentObject, mainCamera)
 	{
 		Debug.Assert(backgroundCameraGameObject == null);
 		backgroundCameraGameObject = new GameObject();
 		backgroundCameraGameObject.name = "MRBackgroundCamera";
-		backgroundCameraGameObject.transform.parent = cameraInTrackingSpace ? cameraRig.trackingSpace : parentObject.transform;
+		backgroundCameraGameObject.transform.parent = parentObject.transform;
 		backgroundCamera = backgroundCameraGameObject.AddComponent<Camera>();
 		backgroundCamera.stereoTargetEye = StereoTargetEyeMask.None;
 		backgroundCamera.depth = float.MaxValue;
@@ -49,7 +32,7 @@ public class OVRExternalComposition : OVRComposition
 		Debug.Assert(foregroundCameraGameObject == null);
 		foregroundCameraGameObject = new GameObject();
 		foregroundCameraGameObject.name = "MRForgroundCamera";
-		foregroundCameraGameObject.transform.parent = cameraInTrackingSpace ? cameraRig.trackingSpace : parentObject.transform;
+		foregroundCameraGameObject.transform.parent = parentObject.transform;
 		foregroundCamera = foregroundCameraGameObject.AddComponent<Camera>();
 		foregroundCamera.stereoTargetEye = StereoTargetEyeMask.None;
 		foregroundCamera.depth = float.MaxValue;
@@ -64,7 +47,7 @@ public class OVRExternalComposition : OVRComposition
 		Debug.Assert(cameraProxyPlane == null);
 		cameraProxyPlane = GameObject.CreatePrimitive(PrimitiveType.Quad);
 		cameraProxyPlane.name = "MRProxyClipPlane";
-		cameraProxyPlane.transform.parent = cameraInTrackingSpace ? cameraRig.trackingSpace : parentObject.transform;
+		cameraProxyPlane.transform.parent = parentObject.transform;
 		cameraProxyPlane.GetComponent<Collider>().enabled = false;
 		cameraProxyPlane.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 		Material clipMaterial = new Material(Shader.Find("Oculus/OVRMRClipPlane"));
@@ -101,19 +84,11 @@ public class OVRExternalComposition : OVRComposition
 
 			backgroundCamera.fieldOfView = OVRMixedReality.fakeCameraFov;
 			backgroundCamera.aspect = OVRMixedReality.fakeCameraAspect;
+			backgroundCamera.transform.FromOVRPose(worldSpacePose);
+
 			foregroundCamera.fieldOfView = OVRMixedReality.fakeCameraFov;
 			foregroundCamera.aspect = OVRMixedReality.fakeCameraAspect;
-
-			if (cameraInTrackingSpace)
-			{
-				backgroundCamera.transform.FromOVRPose(trackingSpacePose, true);
-				foregroundCamera.transform.FromOVRPose(trackingSpacePose, true);
-			}
-			else
-			{
-				backgroundCamera.transform.FromOVRPose(worldSpacePose);
-				foregroundCamera.transform.FromOVRPose(worldSpacePose);
-			}
+			foregroundCamera.transform.FromOVRPose(worldSpacePose);
 		}
 		else
 		{
@@ -123,25 +98,16 @@ public class OVRExternalComposition : OVRComposition
 			// So far, only support 1 camera for MR and always use camera index 0
 			if (OVRPlugin.GetMixedRealityCameraInfo(0, out extrinsics, out intrinsics))
 			{
+				OVRPose worldSpacePose = ComputeCameraWorldSpacePose(extrinsics);
+
 				float fovY = Mathf.Atan(intrinsics.FOVPort.UpTan) * Mathf.Rad2Deg * 2;
 				float aspect = intrinsics.FOVPort.LeftTan / intrinsics.FOVPort.UpTan;
 				backgroundCamera.fieldOfView = fovY;
 				backgroundCamera.aspect = aspect;
+				backgroundCamera.transform.FromOVRPose(worldSpacePose);
 				foregroundCamera.fieldOfView = fovY;
 				foregroundCamera.aspect = intrinsics.FOVPort.LeftTan / intrinsics.FOVPort.UpTan;
-
-				if (cameraInTrackingSpace)
-				{
-					OVRPose trackingSpacePose = ComputeCameraTrackingSpacePose(extrinsics);
-					backgroundCamera.transform.FromOVRPose(trackingSpacePose, true);
-					foregroundCamera.transform.FromOVRPose(trackingSpacePose, true);
-				}
-				else
-				{
-					OVRPose worldSpacePose = ComputeCameraWorldSpacePose(extrinsics);
-					backgroundCamera.transform.FromOVRPose(worldSpacePose);
-					foregroundCamera.transform.FromOVRPose(worldSpacePose);
-				}
+				foregroundCamera.transform.FromOVRPose(worldSpacePose);
 			}
 			else
 			{

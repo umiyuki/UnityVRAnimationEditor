@@ -1,39 +1,9 @@
-/************************************************************************************
-Copyright : Copyright (c) Facebook Technologies, LLC and its affiliates. All rights reserved.
-
-Licensed under the Oculus Utilities SDK License Version 1.31 (the "License"); you may not use
-the Utilities SDK except in compliance with the License, which is provided at the time of installation
-or download, or which otherwise accompanies this software in either electronic or hard copy form.
-
-You may obtain a copy of the License at
-https://developer.oculus.com/licenses/utilities-1.31
-
-Unless required by applicable law or agreed to in writing, the Utilities SDK distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-ANY KIND, either express or implied. See the License for the specific language governing
-permissions and limitations under the License.
-************************************************************************************/
-
 using UnityEngine;
 using System.Collections;
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
 
 public abstract class OVRComposition {
-
-	public bool cameraInTrackingSpace = false;
-	public OVRCameraRig cameraRig = null;
-
-	protected OVRComposition(GameObject parentObject, Camera mainCamera)
-	{
-		OVRCameraRig cameraRig = mainCamera.GetComponentInParent<OVRCameraRig>();
-		if (cameraRig == null)
-		{
-			cameraRig = parentObject.GetComponent<OVRCameraRig>();
-		}
-		cameraInTrackingSpace = (cameraRig != null && cameraRig.trackingSpace != null);
-		this.cameraRig = cameraRig;
-	}
 
 	public abstract OVRManager.CompositionMethod CompositionMethod();
 
@@ -45,15 +15,9 @@ public abstract class OVRComposition {
 	protected bool usingLastAttachedNodePose = false;
 	protected OVRPose lastAttachedNodePose = new OVRPose();            // Sometimes the attach node pose is not readable (lose tracking, low battery, etc.) Use the last pose instead when it happens
 
-	public OVRPose ComputeCameraWorldSpacePose(OVRPlugin.CameraExtrinsics extrinsics)
+	internal OVRPose ComputeCameraWorldSpacePose(OVRPlugin.CameraExtrinsics extrinsics)
 	{
-		OVRPose trackingSpacePose = ComputeCameraTrackingSpacePose(extrinsics);
-		OVRPose worldSpacePose = OVRExtensions.ToWorldSpacePose(trackingSpacePose);
-		return worldSpacePose;
-	}
-
-	public OVRPose ComputeCameraTrackingSpacePose(OVRPlugin.CameraExtrinsics extrinsics)
-	{
+		OVRPose worldSpacePose = new OVRPose();
 		OVRPose trackingSpacePose = new OVRPose();
 
 		OVRPose cameraTrackingSpacePose = extrinsics.RelativePose.ToOVRPose();
@@ -83,7 +47,8 @@ public abstract class OVRComposition {
 			}
 		}
 
-		return trackingSpacePose;
+		worldSpacePose = OVRExtensions.ToWorldSpacePose(trackingSpacePose);
+		return worldSpacePose;
 	}
 
 }
