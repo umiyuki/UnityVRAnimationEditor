@@ -9,7 +9,6 @@ public class PlayManually : MonoBehaviour
 
     public static bool IsPlaying() { return isPlay; }
 
-    public float nextFrameTime = 0f;
     public static float nowFrameTime = 0f;
     public static float prevFrameTime = 0f;
 
@@ -19,14 +18,20 @@ public class PlayManually : MonoBehaviour
     float playSpeed = 1f;
 
     [SerializeField] GameObject textPlayingObject;
+    [SerializeField] EditingAnimationClipInfo editingAnimationClipInfo;
+
+    bool enableLoopMarker = false;
+    [SerializeField] LoopMarker[] loopMarkers;
+
+    public void OnToggleEnableLoopMarker(bool enable)
+    {
+        enableLoopMarker = enable;
+    }
 
     public void TogglePlay()
     {
-        var clip = wAnimationWindowHelper.GetAnimationWindowCurrentClip();
-        if (clip == null)
-        {
-            return;
-        }
+        float frameRate = editingAnimationClipInfo.GetFrameRate();
+        if (frameRate == 0) { return; }
 
         isPlay = !isPlay;
 
@@ -34,7 +39,6 @@ public class PlayManually : MonoBehaviour
         if (isPlay)
         {
             nowFrameTime = wAnimationWindowHelper.GetCurrentTime();
-            nextFrameTime = nowFrameTime + 1f / (float)clip.frameRate;
             textPlayingObject.SetActive(true);
         }
         else//再生終了
@@ -64,16 +68,25 @@ public class PlayManually : MonoBehaviour
 
     public void Scrub(int frame)
     {
-        var clip = wAnimationWindowHelper.GetAnimationWindowCurrentClip();
-        if (clip == null)
-        {
-            return;
-        }
+        float frameRate = editingAnimationClipInfo.GetFrameRate();
+        if (frameRate == 0) { return; }
 
-        float setTime = (float)frame / (float)clip.frameRate;
+        float setTime = (float)frame / frameRate;
         wAnimationWindowHelper.GoToTime(setTime);
         nowFrameTime = setTime;
         prevFrameTime = nowFrameTime;
+    }
+
+    void GetStartEndTimeFromLoopMarker(out float startTime, out float endTime)
+    {
+        List<float> markerTimeList = new List<float>();
+        foreach (var marker in loopMarkers)
+        {
+            markerTimeList.Add(marker.GetTime());
+        }
+        var markerTimeArr = markerTimeList.ToArray();
+        startTime = Mathf.Min(markerTimeArr);
+        endTime = Mathf.Max(markerTimeArr);
     }
 
     // Update is called once per frame
@@ -81,10 +94,15 @@ public class PlayManually : MonoBehaviour
     {
         if (!isPlay) { return; }
 
-        var clip = wAnimationWindowHelper.GetAnimationWindowCurrentClip();
-        if (clip == null)
+        float frameRate = editingAnimationClipInfo.GetFrameRate();
+        if (frameRate == 0) { return; }
+
+        //ループのスタートと終了を取得
+        float startTime = 0f;
+        float endTime = editingAnimationClipInfo.GetFrameLength() / frameRate;
+        if (enableLoopMarker)
         {
-            return;
+            GetStartEndTimeFromLoopMarker(out startTime, out endTime);
         }
 
         //if (wAnimationWindowHelper.IsRecording())
@@ -113,7 +131,7 @@ public class PlayManually : MonoBehaviour
 
         if (goLoop)
         {
-            wAnimationWindowHelper.GoToTime(0f);
+            wAnimationWindowHelper.GoToTime(startTime);
             goLoop = false;
         }
         /*else if (nowFrameTime > nextFrameTime)
@@ -146,11 +164,10 @@ public class PlayManually : MonoBehaviour
         prevFrameTime = nowFrameTime;
         nowFrameTime += Time.deltaTime * playSpeed;
 
-        if (nowFrameTime >= clip.length)
+        if (nowFrameTime >= endTime)
         {
             goLoop = true;
-            nowFrameTime = 0;
-            nextFrameTime = 0;
+            nowFrameTime = startTime;
         }
 
         //Debug.LogWarning("prevFrameTime:" + prevFrameTime);

@@ -9,20 +9,18 @@ public class SeekBar : MonoBehaviour
     [SerializeField]Text text;
 
     [SerializeField]PlayManually playManually;
+    [SerializeField] EditingAnimationClipInfo editingAnimationClipInfo;
 
     // Update is called once per frame
     void Update()
     {
-        var clip = wAnimationWindowHelper.GetAnimationWindowCurrentClip();
-        if (clip == null)
-        {
-            return;
-        }
+        float frameRate = editingAnimationClipInfo.GetFrameRate();
+        if (frameRate == 0) { return; }
 
-        int finalFrame = Mathf.RoundToInt(clip.length * clip.frameRate);
+        int finalFrame = Mathf.RoundToInt(editingAnimationClipInfo.GetFrameLength());
 
         slider.maxValue = finalFrame;
-        var currentFrame = Mathf.RoundToInt( PlayManually.nowFrameTime * clip.frameRate);
+        var currentFrame = Mathf.RoundToInt( PlayManually.nowFrameTime * frameRate);
         if (!slider.scrubbing)
         {
             slider.value = currentFrame;
