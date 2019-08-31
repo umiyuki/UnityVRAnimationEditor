@@ -46,6 +46,18 @@ public class wAnimationWindowHelper
         //PrintMethods();
     }
 
+    public static void SetFrameRate(float newFramerate)
+    {
+        if (_window != null)
+        {
+            _windowStateType.InvokeMember("set_clipFrameRate", BindingFlags.InvokeMethod | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public | BindingFlags.Instance, null, _animWindowStateObject, new object[1] { newFramerate });
+        }
+        else
+        {
+            Debug.Log("_window == null!");
+        }
+    }
+
     public static void AddClipToAnimationPlayerComponent(AnimationClip clip)
     {
         //activeAnimationPlayerを取得
@@ -297,6 +309,19 @@ public class wAnimationWindowHelper
         }
 
         return ret;
+    }
+
+    public static void SetCurrentTime(float time)
+    {
+        if (_window != null)
+        {
+            _windowStateType.InvokeMember("set_currentTime", BindingFlags.InvokeMethod | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public | BindingFlags.Instance, null, _animWindowStateObject, new object[1] { time });
+
+        }
+        else
+        {
+            Debug.Log("_window == null!");
+        }
     }
 
     public static void StartRecording()

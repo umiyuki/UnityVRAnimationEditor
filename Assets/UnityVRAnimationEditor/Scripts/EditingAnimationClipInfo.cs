@@ -68,10 +68,12 @@ public class EditingAnimationClipInfo : MonoBehaviour
 
         clipFrameRate = newFrameRate;
 
+        /*
         if (editingClip != null)
         {
             editingClip.frameRate = clipFrameRate;
-        }
+        }*/
+        wAnimationWindowHelper.SetFrameRate(newFrameRate);
 
         if (OnChangeFrameRate != null)
         {

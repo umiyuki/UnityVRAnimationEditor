@@ -23,6 +23,13 @@ public class PlayManually : MonoBehaviour
     bool enableLoopMarker = false;
     [SerializeField] LoopMarker[] loopMarkers;
 
+    bool enableLoop = true;
+
+    public void OnToggleEnableLoop(bool enable)
+    {
+        enableLoop = enable;
+    }
+
     public void OnToggleEnableLoopMarker(bool enable)
     {
         enableLoopMarker = enable;
@@ -40,6 +47,18 @@ public class PlayManually : MonoBehaviour
         {
             nowFrameTime = wAnimationWindowHelper.GetCurrentTime();
             textPlayingObject.SetActive(true);
+
+            //ループスタートマーカーから開始
+            if (enableLoopMarker)
+            {
+                float startTime, endTime;
+                GetStartEndTimeFromLoopMarker(out startTime, out endTime);
+                if (nowFrameTime < startTime || nowFrameTime > endTime)
+                {
+                    wAnimationWindowHelper.GoToTime(startTime);
+                    nowFrameTime = startTime;
+                }
+            }
         }
         else//再生終了
         {
@@ -133,6 +152,10 @@ public class PlayManually : MonoBehaviour
         {
             wAnimationWindowHelper.GoToTime(startTime);
             goLoop = false;
+            if (!enableLoop)
+            {
+                TogglePlay();
+            }
         }
         /*else if (nowFrameTime > nextFrameTime)
         {
@@ -166,8 +189,8 @@ public class PlayManually : MonoBehaviour
 
         if (nowFrameTime >= endTime)
         {
-            goLoop = true;
-            nowFrameTime = startTime;
+                goLoop = true;
+                nowFrameTime = startTime;
         }
 
         //Debug.LogWarning("prevFrameTime:" + prevFrameTime);
