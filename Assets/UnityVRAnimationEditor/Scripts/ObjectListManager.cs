@@ -23,10 +23,7 @@ public class ObjectListManager : MonoBehaviour
         for (int i = 0; i < content.childCount; i++)
         {
             var child = content.GetChild(i);
-            if (child.name != "AddAnimation")
-            {
-                Destroy(child.gameObject);
-            }
+            Destroy(child.gameObject);
         }
 
         //シーン内のAnimatorかAnimationコンポーネントを持ってるオブジェクトを列挙

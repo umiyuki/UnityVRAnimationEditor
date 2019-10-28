@@ -177,7 +177,7 @@ public class AnimationWindowController : MonoBehaviour {
     public void HoldPrevFrame()
     {
         //6フレームに一回入力
-        if (countFramePrevFrame > 20 && countFramePrevFrame % 8 == 0)
+        if (countFramePrevFrame > 20 && countFramePrevFrame % 4 == 0)
         {
             PrevFrame();
         }
@@ -200,7 +200,7 @@ public class AnimationWindowController : MonoBehaviour {
     public void HoldNextFrame()
     {
         //6フレームに一回入力
-        if (countFrameNextFrame > 20 && countFrameNextFrame % 8 == 0)
+        if (countFrameNextFrame > 20 && countFrameNextFrame % 4 == 0)
         {
             NextFrame();
         }

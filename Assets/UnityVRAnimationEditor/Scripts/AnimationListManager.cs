@@ -30,7 +30,7 @@ public class AnimationListManager : MonoBehaviour
         for (int i = 0; i < content.childCount; i++)
         {
             var child = content.GetChild(i);
-            if (child.name != "AddAnimation")
+            if (child.name != "AddAnimation") //アニメーション追加ボタンは削除しない
             {
                 Destroy(child.gameObject);
             }

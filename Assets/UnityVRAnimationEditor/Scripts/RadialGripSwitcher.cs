@@ -13,7 +13,6 @@ public class RadialGripSwitcher : MonoBehaviour {
     [SerializeField] UnityEvent OnClickAndGripLeft;
     [SerializeField] UnityEvent OnHoldAndGripLeft;
     [SerializeField] UnityEvent OnClickRight;
-    [SerializeField] UnityEvent OnHoverEnterRight;
     [SerializeField] UnityEvent OnHoldRight;
     [SerializeField] UnityEvent OnClickAndGripRight;
     [SerializeField] UnityEvent OnHoldAndGripRight;
@@ -25,6 +24,37 @@ public class RadialGripSwitcher : MonoBehaviour {
     [SerializeField] UnityEvent OnHoldDown;
     [SerializeField] UnityEvent OnClickAndGripDown;
     [SerializeField] UnityEvent OnHoldAndGripDown;
+
+    bool isHoverLeft = false;
+    bool isHoverRight = false;
+    bool isHoverUp = false;
+    bool isHoverDown = false;
+
+    private void Update()
+    {
+        //Riftだけの処理
+        if (HeadsetType != SDK_BaseHeadset.HeadsetType.OculusRift)
+        {
+            return;
+        }
+
+        if (isHoverLeft)
+        {
+            DoHoldLeft();
+        }
+        else if (isHoverRight)
+        {
+            DoHoldRight();
+        }
+        else if (isHoverUp)
+        {
+            DoHoldUp();
+        }
+        else if (isHoverDown)
+        {
+            DoHoldDown();
+        }
+    }
 
     SDK_BaseHeadset.HeadsetType HeadsetType {
         get {
@@ -65,6 +95,16 @@ public class RadialGripSwitcher : MonoBehaviour {
         }
 
         DoClickLeft();
+        isHoverLeft = true;
+    }
+
+    public void DoHoverExitLeft()
+    {
+        if (HeadsetType != SDK_BaseHeadset.HeadsetType.OculusRift)
+        {
+            return;
+        }
+        isHoverLeft = false;
     }
 
     public void DoHoldLeft()
@@ -113,6 +153,17 @@ public class RadialGripSwitcher : MonoBehaviour {
         }
 
         DoClickRight();
+        isHoverRight = true;
+    }
+
+    public void DoHoverExitRight()
+    {
+        if (HeadsetType != SDK_BaseHeadset.HeadsetType.OculusRift)
+        {
+            return;
+        }
+
+        isHoverRight = false;
     }
 
     public void DoHoldRight()
@@ -162,6 +213,17 @@ public class RadialGripSwitcher : MonoBehaviour {
         }
 
         DoClickUp();
+        isHoverUp = true;
+    }
+
+    public void DoHoverExitUp()
+    {
+        if (HeadsetType != SDK_BaseHeadset.HeadsetType.OculusRift)
+        {
+            return;
+        }
+
+        isHoverUp = false;
     }
 
     public void DoHoldUp()
@@ -211,6 +273,16 @@ public class RadialGripSwitcher : MonoBehaviour {
         }
 
         DoClickDown();
+        isHoverDown = true;
+    }
+
+    public void DoHoverExitDown()
+    {
+        if (HeadsetType != SDK_BaseHeadset.HeadsetType.OculusRift)
+        {
+            return;
+        }
+        isHoverDown = false;
     }
 
     public void DoHoldDown()

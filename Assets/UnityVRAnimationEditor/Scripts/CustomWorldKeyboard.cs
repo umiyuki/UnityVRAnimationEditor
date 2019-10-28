@@ -30,6 +30,14 @@ public class CustomWorldKeyboard : MonoBehaviour
         gameObject.SetActive(true);
     }
 
+    public void Cancel()
+    {
+        if (callback != null) { callback.Invoke(""); }
+        input.text = "";
+
+        gameObject.SetActive(false);
+    }
+
     public void Enter()
     {
         //VRTK_Logger.Info("You've typed [" + input.text + "]");

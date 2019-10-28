@@ -8,10 +8,12 @@ public class PinUIObject : MonoBehaviour {
     [SerializeField] Transform pinParentObject;
     Transform unPinParentObject;
     [SerializeField] Transform uiObject;
+    [SerializeField] VRTK.AnimWindowPointerRenderer animWindowPointerRenderer;
 
 	// Use this for initialization
 	void Start () {
         unPinParentObject = uiObject.parent;
+        animWindowPointerRenderer.enabled = false; //UIをピン止めするまで左手のポインタ無効化
 	}
 
 
@@ -21,6 +23,7 @@ public class PinUIObject : MonoBehaviour {
         {
             uiObject.SetParent(pinParentObject, true);
             pinning = true;
+            animWindowPointerRenderer.enabled = true;
         }
         else
         {
@@ -29,6 +32,7 @@ public class PinUIObject : MonoBehaviour {
             uiObject.localRotation = Quaternion.identity;
             uiObject.localScale = Vector3.one;
             pinning = false;
+            animWindowPointerRenderer.enabled = false;
         }
     }
 }
