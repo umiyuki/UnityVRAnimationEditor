@@ -38,6 +38,7 @@ namespace UnityEditor.Experimental.EditorVR.Helpers
                 m_RawImage.uvRect = rect;
             }
 
+
             if (!m_RawImage && !m_Material)
             {
                 var renderer = GetComponent<Renderer>();

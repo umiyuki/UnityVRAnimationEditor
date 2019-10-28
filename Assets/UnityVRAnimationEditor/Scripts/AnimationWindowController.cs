@@ -7,7 +7,6 @@ public class AnimationWindowController : MonoBehaviour {
 
     [SerializeField] Transform getWindowObject; //ウインドウを取得するオブジェクト
     [SerializeField] GameObject setWindowObject; //取得したウインドウをセットするオブジェクト
-    private uWindowCapture.UwcWindowTexture childWindow;
     bool init = false;
     WindowsInput.InputSimulator inputSimulator;
 
@@ -122,18 +121,16 @@ public class AnimationWindowController : MonoBehaviour {
 
     }
 
-    public Vector2? GetMousePosFromUV(Vector2 textureCoord)
+    public Vector2? GetMousePosInEditorWindowFromUV(Vector2 textureCoord)
     {
         //if (childWindow == null) { return null; }
         //Debug.Log(textureCoord);
         var rect = editorWindowCapture.m_Position;
         var windowLocalX = (int)(textureCoord.x * rect.width);
         var windowLocalY = (int)(textureCoord.y * rect.height);
-        var desktopX = rect.x + windowLocalX;
-        var desktopY = rect.y + windowLocalY;
-        Vector2 desktopPos = new Vector2(desktopX, desktopY);
+        Vector2 pos = new Vector2(windowLocalX, windowLocalY);
 
-        return desktopPos;
+        return pos;
     }
 
     public void OnTouch()

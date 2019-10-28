@@ -126,7 +126,8 @@ namespace VRTK
             bool isAnyOtherCameraUsed = VRTK_SDKManager.GetAllSDKSetups().Any(setup => setup != null && setup.gameObject.activeSelf)
                                         || VRTK_DeviceFinder.HeadsetCamera() != null;
             fallbackCamera.gameObject.SetActive(!isAnyOtherCameraUsed);
-            eventSystem.gameObject.SetActive(EventSystem.current == null || EventSystem.current == eventSystem);
+
+            eventSystem.gameObject.SetActive(EventSystem.current == null || EventSystem.current.gameObject == eventSystem.gameObject);            
         }
 
         protected virtual void UpdateCurrentText()

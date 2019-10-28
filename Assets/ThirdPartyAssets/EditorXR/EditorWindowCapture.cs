@@ -130,6 +130,57 @@ namespace UnityEditor.Experimental.EditorVR.Helpers
             }
         }
 
+        public void SendEvent(Vector2 position, EventType type)
+        {
+            if (m_Window == null)
+                return;
+
+            /*
+            var ray = new Ray(rayOrigin.position, rayOrigin.forward);
+            var plane = new Plane(workspace.up, workspace.position);
+            float distance;
+            plane.Raycast(ray, out distance);
+            var localPosition = transform.parent.InverseTransformPoint(ray.GetPoint(distance));
+            localPosition.x += 0.5f;
+            localPosition.y = -localPosition.z + 0.5f;
+            */
+
+            var clickPosition = position;
+
+            //var rect = m_Window.position;
+            //var clickPosition = Vector2.Scale(localPosition, rect.size);
+
+            if (clickPosition.y < 0) // Click y positions below 0 move the window and cause issues
+                return;
+
+            clickPosition += k_WindowOffset;
+
+#if UNITY_EDITOR_WIN
+
+            // Send a message to cancel context menus in case the user clicked a drop-down
+            // Thread is needed because context menu blocks main thread
+            // コンテキストメニューがメインスレッドをブロックするため、ユーザーがドロップダウン
+            // スレッドが必要な場合にコンテキストメニューをキャンセルするためのメッセージを送信
+            // する 
+            if (type == EventType.MouseDown)
+            {
+                new Thread(() =>
+                {
+                    const int HWND_BROADCAST = 0xffff;
+                    const int WM_CANCELMODE = 0x001F;
+                    var hwnd = new IntPtr(HWND_BROADCAST);
+                    SendMessage(hwnd, WM_CANCELMODE, 0, IntPtr.Zero);
+                }).Start();
+            }
+#endif
+
+            m_Window.SendEvent(new Event
+            {
+                type = type,
+                mousePosition = clickPosition
+            });
+        }
+
         public void SendEvent(Transform rayOrigin, Transform workspace, EventType type)
         {
             if (m_Window == null)
@@ -155,6 +206,9 @@ namespace UnityEditor.Experimental.EditorVR.Helpers
 
             // Send a message to cancel context menus in case the user clicked a drop-down
             // Thread is needed because context menu blocks main thread
+            // コンテキストメニューがメインスレッドをブロックするため、ユーザーがドロップダウン
+            // スレッドが必要な場合にコンテキストメニューをキャンセルするためのメッセージを送信
+            // する 
             if (type == EventType.MouseDown)
             {
                 new Thread(() =>

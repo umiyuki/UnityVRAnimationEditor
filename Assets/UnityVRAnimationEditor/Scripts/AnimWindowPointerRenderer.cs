@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor.Experimental.EditorVR.Helpers;
 
 namespace VRTK
 {
@@ -10,9 +11,9 @@ namespace VRTK
 
         [SerializeField] AnimationWindowController animationWindowController;
         VRTK_UIPointer uiPointer;
-        bool inUIElements = false;
 
-        uTouchInjection.Pointer pointer;
+        [SerializeField]EditorWindowCapture editorWindowCapture;
+        Vector2 pointerPos;
 
         static int currentId = 0;
 
@@ -77,17 +78,25 @@ namespace VRTK
             //当たってる対象がAnimationWindowならマウス操作
             if (rayHit && pointerCollidedWith.collider.tag == "AnimationWindow")
             {
-                if (state == TouchState.Release)
+                var mousePosInEditorWindow = animationWindowController.GetMousePosInEditorWindowFromUV(pointerCollidedWith.textureCoord);
+                if (mousePosInEditorWindow != null && editorWindowCapture!=null)
                 {
-                    GetPointer();
-                    pointer.Hover();
-                    state = TouchState.Hover;
+                    //pointer.position = desktopPos.Value;
+                    pointerPos = mousePosInEditorWindow.Value;
+
+                    if (state == TouchState.Release)
+                    {
+                        //GetPointer();
+                        //pointer.Hover();
+                        state = TouchState.Hover;
+                        editorWindowCapture.SendEvent(pointerPos, EventType.MouseMove);
+                    }
+                    else
+                    {
+                        editorWindowCapture.SendEvent(pointerPos, EventType.MouseDrag);
+                    }
                 }
-                var desktopPos = animationWindowController.GetMousePosFromUV(pointerCollidedWith.textureCoord);
-                if (desktopPos != null)
-                {
-                    pointer.position = desktopPos.Value;
-                }
+
                 GetComponent<VRTK.VRTK_Pointer>().Toggle(true);
             }
             //UIに当たってればＵＩ操作
@@ -98,7 +107,6 @@ namespace VRTK
             //AnimationWindowにもUIにも当たっていない
             else
             {
-                ReleasePointer();
                 state = TouchState.Release;
                 GetComponent<VRTK.VRTK_Pointer>().Toggle(false);
             }
@@ -110,18 +118,20 @@ namespace VRTK
         {
             if (state == TouchState.Release) { return; }
             //animationWindowController.OnTouch();
-            GetPointer();
-            pointer.Touch();
-            state = TouchState.Touch;
+            //GetPointer();
+            //pointer.Touch();
+            //state = TouchState.Touch;
+            editorWindowCapture.SendEvent(pointerPos, EventType.MouseDown);
         }
 
         private void DoTriggerReleased(object sender, ControllerInteractionEventArgs e)
         {
             if (state == TouchState.Release) { return; }
             //animationWindowController.OnRelease();
-            GetPointer();
-            pointer.Hover();
-            state = TouchState.Hover;
+            //GetPointer();
+            //pointer.Hover();
+            //state = TouchState.Hover;
+            editorWindowCapture.SendEvent(pointerPos, EventType.MouseUp);
         }
 
         private void DoMenuPressed(object sender, ControllerInteractionEventArgs e)
@@ -158,6 +168,7 @@ namespace VRTK
         /// </summary>
         public override void UpdateRenderer()
         {
+            /*
             //タッチステートを処理
             switch (state)
             {
@@ -171,7 +182,7 @@ namespace VRTK
                     GetPointer();
                     pointer.Touch();
                     break;
-            }
+            }*/
 
             float tracerLength = CastRayForward();
             SetPointerAppearance(tracerLength);
@@ -192,22 +203,6 @@ namespace VRTK
             }
         }
 
-        void GetPointer()
-        {
-            if (pointer != null) return;
-
-            pointer = uTouchInjection.Manager.GetPointer(currentId);
-            currentId++;
-        }
-
-        void ReleasePointer()
-        {
-            if (pointer == null) return;
-
-            pointer.Release();
-            pointer = null;
-            currentId--;
-        }
     }
 
 }
