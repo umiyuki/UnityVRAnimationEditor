@@ -55,7 +55,7 @@ public class PlayManually : MonoBehaviour
                 GetStartEndTimeFromLoopMarker(out startTime, out endTime);
                 if (nowFrameTime < startTime || nowFrameTime > endTime)
                 {
-                    wAnimationWindowHelper.GoToTime(startTime);
+                    GoToTime(startTime);
                     nowFrameTime = startTime;
                 }
             }
@@ -91,7 +91,7 @@ public class PlayManually : MonoBehaviour
         if (frameRate == 0) { return; }
 
         float setTime = (float)frame / frameRate;
-        wAnimationWindowHelper.GoToTime(setTime);
+        GoToTime(setTime);
         nowFrameTime = setTime;
         prevFrameTime = nowFrameTime;
     }
@@ -106,6 +106,22 @@ public class PlayManually : MonoBehaviour
         var markerTimeArr = markerTimeList.ToArray();
         startTime = Mathf.Min(markerTimeArr);
         endTime = Mathf.Max(markerTimeArr);
+    }
+
+    void GoToTime(float time)
+    {
+        float frameRate = editingAnimationClipInfo.GetFrameRate();
+        if (frameRate == 0) { return; }
+
+        if (!wAnimationWindowHelper.GetIsLinkedWithSequencer()) //非timeline
+        {
+            wAnimationWindowHelper.GoToTime(time);
+        }
+        else //timeline
+        {
+            int frame = Mathf.FloorToInt( time * frameRate);
+            wAnimationWindowHelper.SetCurrentTime(time);
+        }
     }
 
     // Update is called once per frame
@@ -123,6 +139,8 @@ public class PlayManually : MonoBehaviour
         {
             GetStartEndTimeFromLoopMarker(out startTime, out endTime);
         }
+
+        //Debug.Log("isLinkedSequencer:" + wAnimationWindowHelper.GetIsLinkedWithSequencer());
 
         //if (wAnimationWindowHelper.IsRecording())
         //{
@@ -150,7 +168,7 @@ public class PlayManually : MonoBehaviour
 
         if (goLoop)
         {
-            wAnimationWindowHelper.GoToTime(startTime);
+            GoToTime(startTime);
             goLoop = false;
             if (!enableLoop)
             {
@@ -181,7 +199,7 @@ public class PlayManually : MonoBehaviour
         }*/
         else
         {
-            wAnimationWindowHelper.GoToTime(nowFrameTime);
+            GoToTime(nowFrameTime);
         }
 
         prevFrameTime = nowFrameTime;

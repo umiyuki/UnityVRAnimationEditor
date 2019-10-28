@@ -339,61 +339,65 @@ public class Node : MonoBehaviour {
         Vector3 eulerAngles = rot.eulerAngles;
 
         {
+            EditorCurveBinding curveBinding = new EditorCurveBinding();
+            curveBinding.path = path;
+            curveBinding.propertyName = "m_LocalRotation.x";
+            curveBinding.type = typeof(Transform);
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, curveBinding);
+            if (curve == null)
+            {
+                curve = new AnimationCurve();
+            }
+
+            SetKey(curve, time, rot.x);
+            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
             //clip.SetCurve(path, typeof(Transform), "localRotation.x", curve);
+        }
+
+        {
             EditorCurveBinding curveBinding = new EditorCurveBinding();
             curveBinding.path = path;
-            curveBinding.propertyName = "localEulerAngles.x";
+            curveBinding.propertyName = "m_LocalRotation.y";
             curveBinding.type = typeof(Transform);
             AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, curveBinding);
             if (curve == null)
             {
                 curve = new AnimationCurve();
             }
-
-            SetKey(curve, time, eulerAngles.x);
+            SetKey(curve, time, rot.y);
             AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
-        }
-
-        {
             //clip.SetCurve(path, typeof(Transform), "localRotation.y", curve);
-            EditorCurveBinding curveBinding = new EditorCurveBinding();
-            curveBinding.path = path;
-            curveBinding.propertyName = "localEulerAngles.y";
-            curveBinding.type = typeof(Transform);
-            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, curveBinding);
-            if (curve == null)
-            {
-                curve = new AnimationCurve();
-            }
-            SetKey(curve, time, eulerAngles.y);
-            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
         }
 
         {
-            //clip.SetCurve(path, typeof(Transform), "localRotation.z", curve);
             EditorCurveBinding curveBinding = new EditorCurveBinding();
             curveBinding.path = path;
-            curveBinding.propertyName = "localEulerAngles.z";
+            curveBinding.propertyName = "m_LocalRotation.z";
             curveBinding.type = typeof(Transform);
             AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, curveBinding);
             if (curve == null)
             {
                 curve = new AnimationCurve();
             }
-            SetKey(curve, time, eulerAngles.z);
+            SetKey(curve, time, rot.z);
             AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+            //clip.SetCurve(path, typeof(Transform), "localRotation.z", curve);
         }
 
-        /*
-        curve = new AnimationCurve();
-        curve.AddKey(0f, rot.w);
-        //clip.SetCurve(path, typeof(Transform), "localRotation.w", curve);
-        curveBinding = new EditorCurveBinding();
-        curveBinding.path = path;
-        curveBinding.propertyName = "m_LocalRotation.w";
-        curveBinding.type = typeof(Transform);
-        AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
-        */
+        {
+            EditorCurveBinding curveBinding = new EditorCurveBinding();
+            curveBinding.path = path;
+            curveBinding.propertyName = "m_LocalRotation.w";
+            curveBinding.type = typeof(Transform);
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, curveBinding);
+            if (curve == null)
+            {
+                curve = new AnimationCurve();
+            }
+            SetKey(curve, time, rot.w);
+            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+            //clip.SetCurve(path, typeof(Transform), "localRotation.w", curve);
+        }
 
         Vector3 pos = t.localPosition;
 

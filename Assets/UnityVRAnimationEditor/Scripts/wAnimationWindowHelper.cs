@@ -275,6 +275,25 @@ public class wAnimationWindowHelper
         }
     }
 
+    //アニメーションウインドウがタイムラインと連携中かどうか
+    public static bool GetIsLinkedWithSequencer()
+    {
+        bool ret = false;
+
+        if (_window != null)
+        {
+            System.Object isLinked = _windowStateType.InvokeMember("linkedWithSequencer", BindingFlags.GetField | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public | BindingFlags.Instance, null, _animWindowStateObject, null);
+
+            ret = (bool)isLinked;
+        }
+        else
+        {
+            Debug.Log("_window == null!");
+        }
+
+        return ret;
+    }
+
     public static int GetCurrentFrame()
     {
         int ret = 0;
