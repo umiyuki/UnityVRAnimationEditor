@@ -16,6 +16,12 @@ public static class AnimationRecorderHelper
 
         while (tempObj.parent != rootTransform)
         {
+            //今編集中のアニメーターと無関係なオブジェクトを操作している場合、親は見つからない
+            if (tempObj.parent == null)
+            {
+                return null;
+            }
+
             returnName = tempObj.parent.name + "/" + returnName;
             tempObj = tempObj.parent;
         }

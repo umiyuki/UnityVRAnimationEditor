@@ -36,6 +36,8 @@ public class GenerateNodes : MonoBehaviour {
 
     public bool IsShowNodeName = true; //ノード名を表示するか否か
 
+    public Dictionary<Transform, Node> transformToNodeDic = new Dictionary<Transform, Node>();
+
 	// Use this for initialization
 	void Start () {
         wireframeCubeMesh = CreateWireFrameCubeMesh();
@@ -97,25 +99,7 @@ public class GenerateNodes : MonoBehaviour {
 
         foreach (var obj in objects)
         {
-            GameObject nodeObject = Instantiate(nodePrefab,null);
-            var node = nodeObject.GetComponent<Node>();
-            node.type = Node.eNodeType.ROOT;
-            node.followTarget = obj.transform;
-            node.wireframeMesh = wireframeCubeMesh;
-            node.normalMesh = cubeMesh;
-            node.normalMaterial = rootNodeMaterial;
-            node.highlightedMaterial = hilightedMaterial;
-            nodeObject.GetComponent<MeshFilter>().sharedMesh = wireframeCubeMesh;
-            node.generateNodes = this;
-            node.colliderSize = nodeSize;
-            if (IsShowNodeName)
-            {
-                nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().SetText(obj.name);
-            }
-            else
-            {
-                nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().gameObject.SetActive(false);
-            }
+            CreateNode(obj, Node.eNodeType.ROOT, wireframeCubeMesh, cubeMesh, rootNodeMaterial);
         }
 
 
@@ -128,24 +112,7 @@ public class GenerateNodes : MonoBehaviour {
 
         foreach (var obj in objects)
         {
-            GameObject nodeObject = Instantiate(nodePrefab, null);
-            var node = nodeObject.GetComponent<Node>();
-            node.type = Node.eNodeType.FK;
-            node.followTarget = obj.transform;
-            node.wireframeMesh = wireframePentaMesh;
-            node.normalMesh = pentaMesh;
-            node.normalMaterial = fkNodeMaterial;
-            node.highlightedMaterial = hilightedMaterial;
-            nodeObject.GetComponent<MeshFilter>().sharedMesh = wireframePentaMesh;
-            node.generateNodes = this;
-            if (IsShowNodeName)
-            {
-                nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().SetText(obj.name);
-            }
-            else
-            {
-                nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().gameObject.SetActive(false);
-            }
+            CreateNode(obj, Node.eNodeType.FK, wireframePentaMesh, pentaMesh, fkNodeMaterial);
         }
 
         objects = new List<GameObject>();
@@ -157,25 +124,32 @@ public class GenerateNodes : MonoBehaviour {
 
         foreach (var obj in objects)
         {
-            GameObject nodeObject = Instantiate(nodePrefab, null);
-            var node = nodeObject.GetComponent<Node>();
-            node.type = Node.eNodeType.IK;
-            node.followTarget = obj.transform;
-            node.wireframeMesh = wireframeOctaMesh;
-            node.normalMesh = octaMesh;
-            node.normalMaterial = ikNodeMaterial;
-            node.highlightedMaterial = hilightedMaterial;
-            nodeObject.GetComponent<MeshFilter>().sharedMesh = wireframeOctaMesh;
-            node.generateNodes = this;
-            if (IsShowNodeName)
-            {
-                nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().SetText(obj.name);
-            }
-            else
-            {
-                nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().gameObject.SetActive(false);
-            }
+            CreateNode(obj, Node.eNodeType.IK, wireframeOctaMesh, octaMesh, ikNodeMaterial);
         }
+    }
+
+    void CreateNode(GameObject target, Node.eNodeType nodeType, Mesh wireframeMesh, Mesh normalMesh, Material normalMaterial)
+    {
+        GameObject nodeObject = Instantiate(nodePrefab, null);
+        var node = nodeObject.GetComponent<Node>();
+        node.type = nodeType;
+        node.followTarget = target.transform;
+        node.wireframeMesh = wireframeMesh;
+        node.normalMesh = normalMesh;
+        node.normalMaterial = normalMaterial;
+        node.highlightedMaterial = hilightedMaterial;
+        nodeObject.GetComponent<MeshFilter>().sharedMesh = wireframeMesh;
+        node.generateNodes = this;
+        if (IsShowNodeName)
+        {
+            nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().SetText(target.name);
+        }
+        else
+        {
+            nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().gameObject.SetActive(false);
+        }
+
+        transformToNodeDic.Add(target.transform, node);
     }
 
     public static GameObject[] FindRootObjects()

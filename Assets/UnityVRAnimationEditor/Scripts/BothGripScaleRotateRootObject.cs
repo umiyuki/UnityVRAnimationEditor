@@ -25,6 +25,7 @@ public class BothGripScaleRotateRootObject : MonoBehaviour
     {
         VRTK_ControllerReference leftReference = VRTK_ControllerReference.GetControllerReference(leftControllerAlias);
         VRTK_ControllerReference rightReference = VRTK_ControllerReference.GetControllerReference(rightControllerAlias);
+        bool isPressGrip = false;
 
         //左手のグリップ押した
         if (VRTK_SDK_Bridge.GetControllerButtonState(SDK_BaseController.ButtonTypes.Grip, SDK_BaseController.ButtonPressTypes.Press, leftReference))
@@ -32,6 +33,7 @@ public class BothGripScaleRotateRootObject : MonoBehaviour
             //移動
             var diffPosition = rootObjectT.InverseTransformPoint(leftControllerAlias.transform.position) - lastLeftPos;
             targetPosition = targetPosition - rootObjectT.TransformVector(diffPosition) * moveFactor;
+            isPressGrip = true;
         }
 
         //右手のグリップ押した
@@ -39,18 +41,21 @@ public class BothGripScaleRotateRootObject : MonoBehaviour
         {
             //移動
             var diffPosition = rootObjectT.InverseTransformPoint(rightControllerAlias.transform.position) - lastRightPos;
-            targetPosition = targetPosition - rootObjectT.TransformVector(diffPosition) * moveFactor;           
+            targetPosition = targetPosition - rootObjectT.TransformVector(diffPosition) * moveFactor;
+            isPressGrip = true;
         }
 
         //移動させる
         /*if (!VRTK_SDK_Bridge.GetControllerButtonState(SDK_BaseController.ButtonTypes.Touchpad, SDK_BaseController.ButtonPressTypes.Touch, leftReference) && !VRTK_SDK_Bridge.GetControllerButtonState(SDK_BaseController.ButtonTypes.Touchpad, SDK_BaseController.ButtonPressTypes.Touch, rightReference))
         {*/
+        if (isPressGrip)
+        {
             rootObjectT.position = Vector3.Lerp(rootObjectT.position, targetPosition, Time.deltaTime * lerpFactor);
-        /*}
+        }
         else
         {
             targetPosition = rootObjectT.position;
-        }*/
+        }
 
 
         //両手のグリップ押してる

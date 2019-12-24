@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
 using UnityEditor;
+using System;
+using System.Reflection;
 
 public class Node : MonoBehaviour {
 
@@ -29,8 +31,6 @@ public class Node : MonoBehaviour {
     public static int undoID = 0;
 
     bool grabbing = false;
-    Vector3 lastLocalPosition;
-    Quaternion lastLocalRotation;
 
     public enum eNodeType
     {
@@ -41,8 +41,25 @@ public class Node : MonoBehaviour {
 
     public eNodeType type = eNodeType.ROOT;
 
+    bool isParent = false;//親のノードかどうか。一番親のノードから階層順にFollowTargetする
+    Node[] childNodes; //子のノード
+    Node parentNode; //親のノード
+
+    Vector3 savedPosition;
+    Quaternion savedQuaternion;
+    Vector3 savedScale;
+
+    static Type typeAnimationUtility;
+
     // Use this for initialization
     protected virtual void Start () {
+
+        //一度だけキャッシュする
+        if (typeAnimationUtility == null)
+        {
+            typeAnimationUtility = System.Reflection.Assembly.Load("UnityEditor.dll").GetType("UnityEditor.AnimationUtility");
+        }
+
         meshFilter = GetComponent<MeshFilter>();
         renderer = GetComponent<Renderer>();
         renderer.material = normalMaterial;
@@ -64,10 +81,18 @@ public class Node : MonoBehaviour {
             DestroyImmediate(rigidBody);
         }
 
+        //その他既存の余計な物削除
+        var fixedJointGrabAttach = followTarget.GetComponent<VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach>();
+        if (fixedJointGrabAttach) { DestroyImmediate(fixedJointGrabAttach); }
+
+        interactableObject = followTarget.GetComponent<VRTK.VRTK_InteractableObject>();
+        if (interactableObject) { DestroyImmediate(interactableObject); }
+
         followTarget.gameObject.layer = LayerMask.NameToLayer("Node");
 
         targetCollider = followTarget.gameObject.AddComponent<BoxCollider>();
-        var fixedJointGrabAttach = followTarget.gameObject.AddComponent<VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach>();
+        targetCollider.center = Vector3.zero;
+        fixedJointGrabAttach = followTarget.gameObject.AddComponent<VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach>();
         fixedJointGrabAttach.precisionGrab = true;
         targetRigidbody = followTarget.gameObject.AddComponent<Rigidbody>();
         targetRigidbody.isKinematic = true;
@@ -89,8 +114,37 @@ public class Node : MonoBehaviour {
         interactableObject.InteractableObjectGrabbed += new VRTK.InteractableObjectEventHandler(DoObjectGrab);
         interactableObject.InteractableObjectUngrabbed += new VRTK.InteractableObjectEventHandler(DoObjectUngrabbed);
 
-        lastLocalPosition = transform.localPosition;
-        lastLocalRotation = transform.localRotation;
+        //親のNodeかどうか
+        var parentTarget = followTarget.parent;
+        if (parentTarget == null)
+        {
+            isParent = true;
+        }
+        else
+        {
+            if (generateNodes.transformToNodeDic.ContainsKey(parentTarget)) //親がNodeなら子
+            {
+                isParent = false;
+                parentNode = generateNodes.transformToNodeDic[parentTarget];
+            }
+            else
+            {
+                isParent = true;
+                parentNode = null;
+            }
+        }
+
+        List<Node> childNodeList = new List<Node>();
+        //子のNodeをすべて取得
+        for (int i = 0; i < followTarget.childCount; i++)
+        {
+            var child = followTarget.GetChild(i);
+            if (generateNodes.transformToNodeDic.ContainsKey(child))
+            {
+                childNodeList.Add(generateNodes.transformToNodeDic[child]);
+            }
+        }
+        childNodes = childNodeList.ToArray();
     }
 
     private void InteractObjectHighlighterHighlighted(object o, InteractObjectHighlighterEventArgs e)
@@ -109,10 +163,6 @@ public class Node : MonoBehaviour {
         }
     }
 
-
-    Vector3 savedPosition;
-    Quaternion savedQuaternion;
-    Vector3 savedScale;
 
     private void DoObjectGrab(object sender, VRTK.InteractableObjectEventArgs e)
     {
@@ -147,17 +197,9 @@ public class Node : MonoBehaviour {
 
     private void DoObjectUngrabbed(object sender, VRTK.InteractableObjectEventArgs e)
     {
-      
-        //UnityEditor.Undo.FlushUndoRecordObjects();
-
-        grabbing = false;
-    }
-
-    private void RecordObject()
-    {
         string undoIDStr = "move target" + undoID.ToString();
 
-        /*var tempPosition = followTarget.localPosition;
+        var tempPosition = followTarget.localPosition;
         var tempRotation = followTarget.localRotation;
         var tempScale = followTarget.localScale;
 
@@ -165,11 +207,26 @@ public class Node : MonoBehaviour {
         followTarget.localPosition = savedPosition;
         followTarget.localRotation = savedQuaternion;
         followTarget.localScale = savedScale;
-        */
+        
 
         //アングラブ時にアンドゥに記録する事でアニメーションウインドウで録画できる
-        //UnityEditor.Undo.RecordObject(followTarget, undoIDStr);
-        //undoID++;
+        UnityEditor.Undo.RecordObject(followTarget, undoIDStr);
+        //UnityEditor.Undo.RegisterCompleteObjectUndo(followTarget, undoIDStr);
+        undoID++;
+
+        
+        followTarget.localPosition = tempPosition;
+        followTarget.localRotation = tempRotation;
+        followTarget.localScale = tempScale;
+        
+        UnityEditor.Undo.FlushUndoRecordObjects();
+        
+
+        grabbing = false;
+    }
+
+    private void RecordObject()
+    {
 
         AnimationClip clip = wAnimationWindowHelper.GetAnimationWindowCurrentClip();
         if (clip == null) { return; }
@@ -177,6 +234,12 @@ public class Node : MonoBehaviour {
 
         Transform rootObjectTransform = wAnimationWindowHelper.GetAnimationWindowCurrentRootGameObject().transform;
         string path = AnimationRecorderHelper.GetTransformPathName(rootObjectTransform, followTarget.transform);
+
+        //今編集中のアニメーターと無関係なオブジェクトならレコードしない
+        if (path == null)
+        {
+            return;
+        }
 
         float time;
         if (PlayManually.IsPlaying())
@@ -189,11 +252,6 @@ public class Node : MonoBehaviour {
         }
 
         SetCurve(time,clip, path, followTarget.transform);
-
-        /*
-        followTarget.localPosition = tempPosition;
-        followTarget.localRotation = tempRotation;
-        followTarget.localScale = tempScale;*/
 
         /*
         if (generateNodes.RecordAllChildObjects)
@@ -209,6 +267,7 @@ public class Node : MonoBehaviour {
 
     // Update is called once per frame
     protected virtual void Update () {
+
         if (followTarget == null) { return; }
 
         //ターゲットが非表示ならノードも非表示にする
@@ -227,26 +286,35 @@ public class Node : MonoBehaviour {
             }
         }
 
-        UpdateFollow();
-
-        if (grabbing )
-        {
-            RecordObject();
+        if (isParent)
+        {          
+            UpdateFollow();
         }
+
     }
 
     private void LateUpdate()
     {
         if (grabbing)
         {
-            followTarget.position = transform.position;
-            followTarget.rotation = transform.rotation;
+            UpdateGrabbing();
+
+            RecordObject();
         }
 
-        lastLocalPosition = transform.localPosition;
-        lastLocalRotation = transform.localRotation;
     }
 
+    protected virtual void UpdateGrabbing()
+    {
+        //親から実行する
+        /*if (!isParent && parentNode != null)
+        {
+            parentNode.UpdateGrabbing();
+        }*/
+
+        followTarget.position = transform.position;
+        followTarget.rotation = transform.rotation;
+    }
 
     protected virtual void UpdateFollow()
     {
@@ -258,6 +326,12 @@ public class Node : MonoBehaviour {
 
         transform.position = followTarget.position;
         transform.rotation = followTarget.rotation;
+
+        //親から順番にUpdateFollowする
+        foreach (var child in childNodes)
+        {
+            child.UpdateFollow();
+        }
     }
 
     int triggerCount = 0;
@@ -333,8 +407,14 @@ public class Node : MonoBehaviour {
         curve.AddKey(time, value);
     }
 
+    static void SetEditorCurveNoSync(AnimationClip clip, EditorCurveBinding binding, AnimationCurve curve)
+    {       
+        typeAnimationUtility.InvokeMember("SetEditorCurveNoSync", System.Reflection.BindingFlags.InvokeMethod | BindingFlags.NonPublic | BindingFlags.Static, null, null, new object[] { clip, binding, curve });
+    }
+
     public static void SetCurve(float time,AnimationClip clip,  string path, Transform t)
     {
+
         Quaternion rot = t.localRotation;
         Vector3 eulerAngles = rot.eulerAngles;
 
@@ -350,7 +430,7 @@ public class Node : MonoBehaviour {
             }
 
             SetKey(curve, time, rot.x);
-            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+            SetEditorCurveNoSync(clip, curveBinding, curve);
             //clip.SetCurve(path, typeof(Transform), "localRotation.x", curve);
         }
 
@@ -365,7 +445,7 @@ public class Node : MonoBehaviour {
                 curve = new AnimationCurve();
             }
             SetKey(curve, time, rot.y);
-            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+            SetEditorCurveNoSync(clip, curveBinding, curve);
             //clip.SetCurve(path, typeof(Transform), "localRotation.y", curve);
         }
 
@@ -380,7 +460,7 @@ public class Node : MonoBehaviour {
                 curve = new AnimationCurve();
             }
             SetKey(curve, time, rot.z);
-            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+            SetEditorCurveNoSync(clip, curveBinding, curve);
             //clip.SetCurve(path, typeof(Transform), "localRotation.z", curve);
         }
 
@@ -395,7 +475,7 @@ public class Node : MonoBehaviour {
                 curve = new AnimationCurve();
             }
             SetKey(curve, time, rot.w);
-            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+            SetEditorCurveNoSync(clip, curveBinding, curve);
             //clip.SetCurve(path, typeof(Transform), "localRotation.w", curve);
         }
 
@@ -413,7 +493,7 @@ public class Node : MonoBehaviour {
                 curve = new AnimationCurve();
             }
             SetKey(curve, time, pos.x);
-            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+            SetEditorCurveNoSync(clip, curveBinding, curve);
         }
 
         {
@@ -428,7 +508,7 @@ public class Node : MonoBehaviour {
                 curve = new AnimationCurve();
             }
             SetKey(curve, time, pos.y);
-            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+            SetEditorCurveNoSync(clip, curveBinding, curve);
         }
 
         {
@@ -443,7 +523,7 @@ public class Node : MonoBehaviour {
                 curve = new AnimationCurve();
             }
             SetKey(curve, time, pos.z);
-            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+            SetEditorCurveNoSync(clip, curveBinding, curve);
         }
 
         /*
