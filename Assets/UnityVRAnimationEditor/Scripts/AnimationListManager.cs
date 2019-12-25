@@ -48,6 +48,7 @@ public class AnimationListManager : MonoBehaviour
             nodeUIButton.text.text = clip.name;
             nodeUIButton.button.onClick.AddListener( () => {
                 wAnimationWindowHelper.SetActiveAnimationClip(clip);
+                Hide();
             });
         }
 

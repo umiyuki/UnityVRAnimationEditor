@@ -109,6 +109,7 @@ namespace VRTK
             {
                 state = TouchState.Release;
                 GetComponent<VRTK.VRTK_Pointer>().Toggle(false);
+                GetComponent<VRTK.VRTK_Pointer>().pointerRenderer.Toggle(false, false);
             }
 
             return OverrideBeamLength(actualLength);

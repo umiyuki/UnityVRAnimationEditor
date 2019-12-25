@@ -3648,6 +3648,7 @@ GameObject:
   - component: {fileID: 562150623}
   - component: {fileID: 562150625}
   - component: {fileID: 562150624}
+  - component: {fileID: 1079233445}
   m_Layer: 0
   m_Name: TextPlaying
   m_TagString: Untagged
@@ -3728,6 +3729,19 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
+--- !u!114 &1079233445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562150622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbf8a0075a0522843aa00bbd0b657af9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textMesh: {fileID: 562150624}
 --- !u!1 &572025902
 GameObject:
   m_ObjectHideFlags: 0
@@ -7370,7 +7384,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 1525159347
   m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &1130638458
@@ -8361,7 +8375,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 1525159347
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &1290119375
@@ -8549,7 +8563,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 1525159347
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &1350715692
@@ -11478,7 +11492,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1742764956}
         m_MethodName: OnValueChangeSlider
-        m_Mode: 0
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -15975,15 +15989,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 252229140266005696}
-  - component: {fileID: 252229140266005702}
   - component: {fileID: 252229140266005697}
+  - component: {fileID: 1184223287}
   m_Layer: 5
   m_Name: EventSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &252229140266005696
 Transform:
   m_ObjectHideFlags: 0
@@ -15998,21 +16012,6 @@ Transform:
   m_Father: {fileID: 252229141571713558}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &252229140266005702
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 252229140266005699}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -619905303, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 0}
-  m_sendNavigationEvents: 1
-  m_DragThreshold: 5
 --- !u!114 &252229140266005697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16032,6 +16031,21 @@ MonoBehaviour:
   m_InputActionsPerSecond: 10
   m_RepeatDelay: 0.5
   m_ForceModuleActive: 0
+--- !u!114 &1184223287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 252229140266005699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2eeb959405d1e047b833dbad7a49f89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FirstSelected: {fileID: 0}
+  m_sendNavigationEvents: 1
+  m_DragThreshold: 10
 --- !u!1 &252229140271454436
 GameObject:
   m_ObjectHideFlags: 0
@@ -16410,6 +16424,7 @@ MonoBehaviour:
   targetRawImage: {fileID: 150056359436161659}
   editorWindowCapture: {fileID: 150056370971210777}
   playManually: {fileID: 1757784532}
+  slider: {fileID: 1742764957}
 --- !u!1 &252229140469573316
 GameObject:
   m_ObjectHideFlags: 0
@@ -18347,7 +18362,7 @@ MonoBehaviour:
   activeScriptingDefineSymbolsWithoutSDKClasses: []
   scriptAliasLeftController: {fileID: 252229141554184969}
   scriptAliasRightController: {fileID: 252229141297755020}
-  autoManageVRSettings: 1
+  autoManageVRSettings: 0
   autoLoadSetup: 1
   setups:
   - {fileID: 252229141511278348}
@@ -20787,7 +20802,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 252229141297755020}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3597d6cb138c040419b22929697eb770, type: 3}
   m_Name: 
@@ -21921,7 +21936,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 252229141554184969}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3597d6cb138c040419b22929697eb770, type: 3}
   m_Name: 
@@ -22252,7 +22267,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fallbackCamera: {fileID: 252229140481973925}
-  eventSystem: {fileID: 252229140266005702}
+  eventSystem: {fileID: 252229140266005702, guid: a97d2c53d97134c4fb92ddaf703bbbc5,
+    type: 3}
   currentText: {fileID: 252229141504109706}
   statusPanel: {fileID: 252229142032031913}
   selectionPanel: {fileID: 252229141817058697}
@@ -26920,7 +26936,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 1525159347
   m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &8966527806661660482

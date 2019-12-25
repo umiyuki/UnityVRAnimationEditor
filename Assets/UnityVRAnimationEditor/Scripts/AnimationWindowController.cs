@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
+
 
 public class AnimationWindowController : MonoBehaviour {
 
@@ -188,6 +190,7 @@ public class AnimationWindowController : MonoBehaviour {
     {
         inputSimulator.Keyboard.ModifiedKeyStroke(WindowsInput.Native.VirtualKeyCode.CONTROL, WindowsInput.Native.VirtualKeyCode.VK_6);
         inputSimulator.Keyboard.ModifiedKeyStroke(null, WindowsInput.Native.VirtualKeyCode.OEM_COMMA);
+        //wAnimationWindowHelper.PreviousFrame();
     }
 
     int countFrameNextFrame = 0;
@@ -211,36 +214,44 @@ public class AnimationWindowController : MonoBehaviour {
     {
         inputSimulator.Keyboard.ModifiedKeyStroke(WindowsInput.Native.VirtualKeyCode.CONTROL, WindowsInput.Native.VirtualKeyCode.VK_6);
         inputSimulator.Keyboard.ModifiedKeyStroke(null, WindowsInput.Native.VirtualKeyCode.OEM_PERIOD);
+        //wAnimationWindowHelper.NextFrame();
     }
 
     public void PrevKeyFrame()
     {
         inputSimulator.Keyboard.ModifiedKeyStroke(WindowsInput.Native.VirtualKeyCode.CONTROL, WindowsInput.Native.VirtualKeyCode.VK_6);
         inputSimulator.Keyboard.ModifiedKeyStroke(WindowsInput.Native.VirtualKeyCode.LMENU, WindowsInput.Native.VirtualKeyCode.OEM_COMMA);
+        //wAnimationWindowHelper.PreviousKeyframe();
     }
 
     public void NextKeyFrame()
     {
         inputSimulator.Keyboard.ModifiedKeyStroke(WindowsInput.Native.VirtualKeyCode.CONTROL, WindowsInput.Native.VirtualKeyCode.VK_6);
         inputSimulator.Keyboard.ModifiedKeyStroke(WindowsInput.Native.VirtualKeyCode.LMENU, WindowsInput.Native.VirtualKeyCode.OEM_PERIOD);
+        //wAnimationWindowHelper.NextKeyFrame();
     }
 
     public void FirstKeyFrame()
     {
         inputSimulator.Keyboard.ModifiedKeyStroke(WindowsInput.Native.VirtualKeyCode.CONTROL, WindowsInput.Native.VirtualKeyCode.VK_6);
         inputSimulator.Keyboard.ModifiedKeyStroke(WindowsInput.Native.VirtualKeyCode.LSHIFT, WindowsInput.Native.VirtualKeyCode.OEM_COMMA);
+        //wAnimationWindowHelper.GoToFirstKeyframe();
     }
 
     public void LastKeyFrame()
     {
         inputSimulator.Keyboard.ModifiedKeyStroke(WindowsInput.Native.VirtualKeyCode.CONTROL, WindowsInput.Native.VirtualKeyCode.VK_6);
         inputSimulator.Keyboard.ModifiedKeyStroke(WindowsInput.Native.VirtualKeyCode.LSHIFT, WindowsInput.Native.VirtualKeyCode.OEM_PERIOD);
+        //wAnimationWindowHelper.GoToLastKeyframe();
     }
 
     public void AddKeyAll()
     {
-        inputSimulator.Keyboard.ModifiedKeyStroke(WindowsInput.Native.VirtualKeyCode.CONTROL, WindowsInput.Native.VirtualKeyCode.VK_6);
-        inputSimulator.Keyboard.ModifiedKeyStroke(null, WindowsInput.Native.VirtualKeyCode.VK_K);
+        //inputSimulator.Keyboard.ModifiedKeyStroke(WindowsInput.Native.VirtualKeyCode.CONTROL, WindowsInput.Native.VirtualKeyCode.VK_6);
+        //inputSimulator.Keyboard.ModifiedKeyStroke(null, WindowsInput.Native.VirtualKeyCode.VK_K);
+        AnimationClip clip = wAnimationWindowHelper.GetAnimationWindowCurrentClip();
+        GameObject rootObject = wAnimationWindowHelper.GetAnimationWindowCurrentRootGameObject();
+        SetKeyAllNodes(clip, rootObject.transform, wAnimationWindowHelper.GetCurrentTime());
     }
 
     public void AddKeyModified()
@@ -318,5 +329,207 @@ public class AnimationWindowController : MonoBehaviour {
     public void OnChangeScaleConstraintToggle(bool value)
     {
         Node.scaleConstraint = !value;
+    }
+
+
+    public static void SetKeyAllNodes(AnimationClip clip, Transform rootObjectTransform, float time)
+    {
+        if (rootObjectTransform.tag == "Node" || rootObjectTransform.tag == "IKNode" || rootObjectTransform.tag == "FKNode")
+        {
+            SetCurve(time, "", rootObjectTransform, clip);
+        }
+        FindChild(rootObjectTransform, "Node", "", clip, time);
+        FindChild(rootObjectTransform, "IKNode", "", clip, time);
+        FindChild(rootObjectTransform, "FKNode", "", clip, time);
+    }
+
+    static void FindChild(Transform parent, string _tag, string path, AnimationClip clip, float time)
+    {
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (child.tag == _tag)
+            {
+                string setPath = path + "/" + child.name;
+                if (path == "")
+                {
+                    setPath = child.name;
+                }
+                SetCurve(time, setPath, child, clip);
+            }
+            if (child.childCount > 0)
+            {
+                string setPath = path + "/" + child.name;
+                if (path == "")
+                {
+                    setPath = child.name;
+                }
+                FindChild(child, _tag, setPath, clip, time);
+            }
+        }
+    }
+
+    public static void SetCurve(float time, string path, Transform t, AnimationClip clip)
+    {
+        Quaternion rot = t.localRotation;
+
+        {
+            EditorCurveBinding curveBinding = new EditorCurveBinding();
+            curveBinding.path = path;
+            curveBinding.propertyName = "m_LocalRotation.x";
+            curveBinding.type = typeof(Transform);
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, curveBinding);
+            if (curve == null)
+            {
+                curve = new AnimationCurve();
+            }
+            SetKey(curve, time, rot.x);
+            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+            //clip.SetCurve(path, typeof(Transform), "localRotation.x", curve);
+        }
+
+        {
+            EditorCurveBinding curveBinding = new EditorCurveBinding();
+            curveBinding.path = path;
+            curveBinding.propertyName = "m_LocalRotation.y";
+            curveBinding.type = typeof(Transform);
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, curveBinding);
+            if (curve == null)
+            {
+                curve = new AnimationCurve();
+            }
+            SetKey(curve, time, rot.y);
+            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+            //clip.SetCurve(path, typeof(Transform), "localRotation.y", curve);
+        }
+
+        {
+            EditorCurveBinding curveBinding = new EditorCurveBinding();
+            curveBinding.path = path;
+            curveBinding.propertyName = "m_LocalRotation.z";
+            curveBinding.type = typeof(Transform);
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, curveBinding);
+            if (curve == null)
+            {
+                curve = new AnimationCurve();
+            }
+            SetKey(curve, time, rot.z);
+            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+            //clip.SetCurve(path, typeof(Transform), "localRotation.z", curve);
+        }
+
+        {
+            EditorCurveBinding curveBinding = new EditorCurveBinding();
+            curveBinding.path = path;
+            curveBinding.propertyName = "m_LocalRotation.w";
+            curveBinding.type = typeof(Transform);
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, curveBinding);
+            if (curve == null)
+            {
+                curve = new AnimationCurve();
+            }
+            SetKey(curve, time, rot.w);
+            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+            //clip.SetCurve(path, typeof(Transform), "localRotation.w", curve);
+        }
+
+        Vector3 pos = t.localPosition;
+
+        {
+            //clip.SetCurve(path, typeof(Transform), "localPosition.x", curve);
+            EditorCurveBinding curveBinding = new EditorCurveBinding();
+            curveBinding.path = path;
+            curveBinding.propertyName = "m_LocalPosition.x";
+            curveBinding.type = typeof(Transform);
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, curveBinding);
+            if (curve == null)
+            {
+                curve = new AnimationCurve();
+            }
+            SetKey(curve, time, pos.x);
+            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+        }
+
+        {
+            //clip.SetCurve(path, typeof(Transform), "localPosition.y", curve);
+            EditorCurveBinding curveBinding = new EditorCurveBinding();
+            curveBinding.path = path;
+            curveBinding.propertyName = "m_LocalPosition.y";
+            curveBinding.type = typeof(Transform);
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, curveBinding);
+            if (curve == null)
+            {
+                curve = new AnimationCurve();
+            }
+            SetKey(curve, time, pos.y);
+            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+        }
+
+        {
+            //clip.SetCurve(path, typeof(Transform), "localPosition.z", curve);
+            EditorCurveBinding curveBinding = new EditorCurveBinding();
+            curveBinding.path = path;
+            curveBinding.propertyName = "m_LocalPosition.z";
+            curveBinding.type = typeof(Transform);
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, curveBinding);
+            if (curve == null)
+            {
+                curve = new AnimationCurve();
+            }
+            SetKey(curve, time, pos.z);
+            AnimationUtility.SetEditorCurve(clip, curveBinding, curve);
+        }
+
+    }
+
+    static void SetKey(AnimationCurve curve, float time, float value)
+    {
+        float prevTime = PlayManually.prevFrameTime;
+        //Debug.Log("time:" + time);
+        //Debug.Log("prevTime:" + prevTime);
+
+        if (PlayManually.IsPlaying() && prevTime != time)//リアルタイムレコードなら
+        {
+            var keys = curve.keys;
+            for (int i = keys.Length - 1; i >= 0; i--)
+            {
+                //ループしてたら
+                if (prevTime > time)
+                {
+                    //前回以降のキーは削除
+                    if (keys[i].time > prevTime)
+                    {
+                        curve.RemoveKey(i);
+                    }
+
+                    //timeより前のキーは削除
+                    else if (keys[i].time <= time)
+                    {
+                        curve.RemoveKey(i);
+                    }
+                }
+                else if (keys[i].time > prevTime && keys[i].time <= time)
+                {
+                    //Debug.Log("RemoveKey:" + i + "time:" + keys[i].time);
+                    //前回から今回までのキーは削除
+                    curve.RemoveKey(i);
+                }
+            }
+        }
+        else//再生中じゃないなら
+        {
+            var keys = curve.keys;
+            for (int i = keys.Length - 1; i >= 0; i--)
+            {
+                if (keys[i].time == time)
+                {
+                    //同じフレームのキーは削除
+                    curve.RemoveKey(i);
+                }
+            }
+        }
+
+        //Debug.Log("AddKey time:" + time);
+        curve.AddKey(time, value);
     }
 }

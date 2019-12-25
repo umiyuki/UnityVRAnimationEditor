@@ -127,6 +127,7 @@ public class PlayManually : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (!isPlay) { return; }
 
         float frameRate = editingAnimationClipInfo.GetFrameRate();

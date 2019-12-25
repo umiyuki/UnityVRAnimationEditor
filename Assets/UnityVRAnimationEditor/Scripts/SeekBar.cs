@@ -45,11 +45,11 @@ public class SeekBar : MonoBehaviour
         playManually.EndScrub();
     }
 
-    public void OnValueChangeSlider(float value)
+    public void OnValueChangeSlider()
     {
         if (slider.scrubbing)
         {
-            playManually.Scrub((int)value);
+            playManually.Scrub((int)slider.value);
         }
     }
 }

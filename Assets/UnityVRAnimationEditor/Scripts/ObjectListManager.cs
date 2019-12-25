@@ -51,6 +51,7 @@ public class ObjectListManager : MonoBehaviour
             nodeUIButton.text.text = target.name;
             nodeUIButton.button.onClick.AddListener(() => {
                 Selection.objects = new Object[1] { target };
+                Hide();
             });
         }
 
