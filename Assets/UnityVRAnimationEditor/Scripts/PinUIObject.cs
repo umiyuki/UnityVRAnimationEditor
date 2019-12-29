@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PinUIObject : MonoBehaviour {
 
@@ -9,6 +10,7 @@ public class PinUIObject : MonoBehaviour {
     Transform unPinParentObject;
     [SerializeField] Transform uiObject;
     [SerializeField] VRTK.AnimWindowPointerRenderer animWindowPointerRenderer;
+    [SerializeField] Toggle pinToggle;
 
 	// Use this for initialization
 	void Start () {
@@ -16,6 +18,19 @@ public class PinUIObject : MonoBehaviour {
         animWindowPointerRenderer.enabled = false; //UIをピン止めするまで左手のポインタ無効化
 	}
 
+    public void TogglePin()
+    {
+        if (pinning)
+        {
+            pinToggle.isOn = false;
+            TogglePin(false);
+        }
+        else
+        {
+            pinToggle.isOn = true;
+            TogglePin(true);
+        }
+    }
 
     public void TogglePin(bool toggle)
     {

@@ -90,7 +90,7 @@ public class AnimationWindowController : MonoBehaviour {
 
         //ウインドウの位置調整
         var pos = setWindowObject.transform.localPosition;
-        pos.z = 0.10f + height * 0.5f;
+        pos.y = 0.10f + height * 0.5f;
         setWindowObject.transform.localPosition = pos;
 
         /*
@@ -245,6 +245,7 @@ public class AnimationWindowController : MonoBehaviour {
         //wAnimationWindowHelper.GoToLastKeyframe();
     }
 
+    //手足など全てのノードのキーが追加される
     public void AddKeyAll()
     {
         //inputSimulator.Keyboard.ModifiedKeyStroke(WindowsInput.Native.VirtualKeyCode.CONTROL, WindowsInput.Native.VirtualKeyCode.VK_6);
@@ -482,7 +483,7 @@ public class AnimationWindowController : MonoBehaviour {
 
     }
 
-    static void SetKey(AnimationCurve curve, float time, float value)
+    public static void SetKey(AnimationCurve curve, float time, float value)
     {
         float prevTime = PlayManually.prevFrameTime;
         //Debug.Log("time:" + time);

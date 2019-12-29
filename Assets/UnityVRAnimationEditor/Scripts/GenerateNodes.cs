@@ -8,7 +8,7 @@ public class GenerateNodes : MonoBehaviour {
     [SerializeField] Transform rootObject;
     [SerializeField] GameObject nodePrefab;
 
-    Mesh wireframeCubeMesh;
+    static Mesh wireframeCubeMesh;
     Mesh cubeMesh;
 
     [SerializeField]Mesh pentaMesh;
@@ -40,7 +40,7 @@ public class GenerateNodes : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        wireframeCubeMesh = CreateWireFrameCubeMesh();
+        wireframeCubeMesh = GetWireFrameCubeMesh();
 
         //cubeMeshを取得する
         var cubeObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -142,11 +142,11 @@ public class GenerateNodes : MonoBehaviour {
         node.generateNodes = this;
         if (IsShowNodeName)
         {
-            nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().SetText(target.name);
+            //nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().SetText(target.name);
         }
         else
         {
-            nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().gameObject.SetActive(false);
+            //nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().gameObject.SetActive(false);
         }
 
         transformToNodeDic.Add(target.transform, node);
@@ -175,8 +175,13 @@ public class GenerateNodes : MonoBehaviour {
     }
 
     //ワイヤフレーム用のキューブメッシュを返す
-    Mesh CreateWireFrameCubeMesh()
+    public static Mesh GetWireFrameCubeMesh()
     {
+        if (wireframeCubeMesh != null)
+        {
+            return wireframeCubeMesh;
+        }
+
         Mesh mesh = new Mesh();
 
         mesh.vertices = new Vector3[8]
@@ -194,6 +199,8 @@ public class GenerateNodes : MonoBehaviour {
         mesh.SetIndices(new int[]{
             0,1,0,2,1,3,2,3,0,4,1,5,2,6,3,7,4,5,5,7,6,7,4,6
         }, MeshTopology.Lines, 0);
+
+        wireframeCubeMesh = mesh;
 
         return mesh;
     }

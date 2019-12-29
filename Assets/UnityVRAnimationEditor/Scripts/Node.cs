@@ -353,7 +353,6 @@ public class Node : MonoBehaviour {
             meshFilter.sharedMesh = wireframeMesh;
             renderer.material = normalMaterial;
         }
-
     }
 
     static void SetEditorCurveNoSync(AnimationClip clip, EditorCurveBinding binding, AnimationCurve curve)
