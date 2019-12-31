@@ -142,11 +142,11 @@ public class GenerateNodes : MonoBehaviour {
         node.generateNodes = this;
         if (IsShowNodeName)
         {
-            //nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().SetText(target.name);
+            nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().SetText(target.name);
         }
         else
         {
-            //nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().gameObject.SetActive(false);
+            nodeObject.GetComponentInChildren<TMPro.TextMeshPro>().gameObject.SetActive(false);
         }
 
         transformToNodeDic.Add(target.transform, node);

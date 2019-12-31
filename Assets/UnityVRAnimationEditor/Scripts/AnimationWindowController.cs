@@ -483,7 +483,7 @@ public class AnimationWindowController : MonoBehaviour {
 
     }
 
-    public static void SetKey(AnimationCurve curve, float time, float value)
+    public static int SetKey(AnimationCurve curve, float time, float value)
     {
         float prevTime = PlayManually.prevFrameTime;
         //Debug.Log("time:" + time);
@@ -531,6 +531,6 @@ public class AnimationWindowController : MonoBehaviour {
         }
 
         //Debug.Log("AddKey time:" + time);
-        curve.AddKey(time, value);
+        return curve.AddKey(time, value);
     }
 }
